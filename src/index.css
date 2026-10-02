@@ -215,3 +215,88 @@
     animation: breathe 2400ms ease-in-out infinite alternate;
   }
 }
+
+@keyframes ding {
+  from {
+    scale: 0.6;
+    opacity: 1;
+  }
+  to {
+    scale: 1.2;
+    opacity: 0;
+  }
+}
+
+@keyframes arrive-reduced {
+  from {
+    scale: 0.96;
+    opacity: 0;
+  }
+  to {
+    scale: 1;
+    opacity: 1;
+  }
+}
+
+@keyframes stamp-static {
+  0%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@layer components {
+  .ding {
+    position: absolute;
+    width: 0;
+    height: 0;
+    animation: ding 280ms ease-out forwards;
+  }
+
+  .ding i {
+    position: absolute;
+    left: -1.5px;
+    top: -22px;
+    width: 3px;
+    height: 12px;
+    border-radius: 2px;
+    background: var(--color-ink);
+    transform-origin: 1.5px 22px;
+  }
+
+  .ding i:nth-child(1) {
+    transform: rotate(-35deg);
+  }
+
+  .ding i:nth-child(3) {
+    transform: rotate(35deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-arrive {
+    animation: arrive-reduced 200ms ease-out backwards;
+  }
+
+  .anim-ring-1,
+  .anim-ring-2,
+  .anim-pin-push,
+  .anim-tick,
+  .anim-breathe,
+  .ding {
+    animation: none;
+  }
+
+  .anim-ring-1,
+  .anim-ring-2,
+  .ding {
+    display: none;
+  }
+
+  .anim-stamp {
+    animation: stamp-static 1500ms linear both;
+  }
+}

@@ -7,10 +7,13 @@ const POLL_MS = 4000;
 const STAGGER_MS = 350;
 const NEW_MS = 2800;
 const FADE_MS = 400;
+const FALL_MS = 1020;
+
+export type Leaving = { placed: Placed; mode: "fade" | "fall" };
 
 export function useWall() {
   const [shown, setShown] = useState<Placed[]>([]);
-  const [leaving, setLeaving] = useState<Placed[]>([]);
+  const [leaving, setLeaving] = useState<Leaving[]>([]);
   const [newIds, setNewIds] = useState<ReadonlySet<string>>(new Set());
   const shownRef = useRef<Placed[]>([]);
   const knownRef = useRef<Set<string> | null>(null);
@@ -45,29 +48,39 @@ export function useWall() {
       }
 
       const gone = shownRef.current.filter((p) => !ids.has(p.entry.id));
+      const remaining = shownRef.current.filter((p) => ids.has(p.entry.id));
+      const mode = remaining.length > 0 ? "fall" : "fade";
       if (gone.length > 0) {
-        commit(shownRef.current.filter((p) => ids.has(p.entry.id)));
-        setLeaving((list) => [...list, ...gone]);
-        later(() => setLeaving((list) => list.filter((p) => !gone.includes(p))), FADE_MS);
+        commit(remaining);
+        const exiting = gone.map((placed) => ({ placed, mode }) as Leaving);
+        setLeaving((list) => [...list, ...exiting]);
+        later(
+          () => setLeaving((list) => list.filter((item) => !exiting.includes(item))),
+          mode === "fall" ? FALL_MS : FADE_MS,
+        );
       }
 
+      const arrivalDelay = mode === "fall" && gone.length > 0 ? 1000 : 0;
       wall
         .filter((entry) => !known.has(entry.id))
         .forEach((entry, index) => {
-          later(() => {
-            const current = shownRef.current;
-            commit([...current, place(entry, current, current.length + 1)]);
-            setNewIds((set) => new Set(set).add(entry.id));
-            later(
-              () =>
-                setNewIds((set) => {
-                  const next = new Set(set);
-                  next.delete(entry.id);
-                  return next;
-                }),
-              NEW_MS,
-            );
-          }, index * STAGGER_MS);
+          later(
+            () => {
+              const current = shownRef.current;
+              commit([...current, place(entry, current, current.length + 1)]);
+              setNewIds((set) => new Set(set).add(entry.id));
+              later(
+                () =>
+                  setNewIds((set) => {
+                    const next = new Set(set);
+                    next.delete(entry.id);
+                    return next;
+                  }),
+                NEW_MS,
+              );
+            },
+            arrivalDelay + index * STAGGER_MS,
+          );
         });
 
       knownRef.current = ids;

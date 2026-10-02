@@ -15,8 +15,6 @@ type BaubleProps = {
   name: string;
   emoji: string;
   fill: Fill;
-  scale?: number;
-  rotation?: number;
   isNew?: boolean;
   exiting?: boolean;
   style?: CSSProperties;
@@ -27,8 +25,6 @@ export function Bauble({
   name,
   emoji,
   fill,
-  scale = 1,
-  rotation = 0,
   isNew = false,
   exiting = false,
   style,
@@ -37,12 +33,8 @@ export function Bauble({
   return (
     <div
       ref={ref}
-      className={`shadow-bauble border-ink relative flex h-[88px] items-center gap-3.5 rounded-full border-[3px] pr-[30px] pl-[7px] ${FILL_CLASS[fill]} ${isNew ? "anim-arrive" : ""} ${exiting ? "anim-fade-out" : ""}`}
-      style={{
-        transformOrigin: "44px 44px",
-        transform: `rotate(${rotation}deg) scale(${scale})`,
-        ...style,
-      }}
+      className={`shadow-bauble border-ink relative flex origin-center h-[88px] items-center gap-3.5 rounded-full border-[3px] pr-[30px] pl-[7px] ${FILL_CLASS[fill]} ${isNew ? "anim-arrive" : ""} ${exiting ? "anim-fade-out" : ""}`}
+      style={style}
     >
       {isNew && (
         <>

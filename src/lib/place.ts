@@ -12,8 +12,8 @@ export type Placed = {
 type Rect = [left: number, top: number, right: number, bottom: number];
 
 const WALLS: Rect[] = [
-  [30, 30, 770, 430],
-  [1480, 20, 1900, 500],
+  [30, 30, 790, 500],
+  [1470, 20, 1900, 520],
 ];
 
 function overlaps(a: Rect, b: Rect, slack: number) {

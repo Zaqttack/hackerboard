@@ -18,6 +18,7 @@ export function Hero({ count, total = 50 }: HeroProps) {
 
   return (
     <div
+      data-wall
       className="absolute top-16 left-16 z-30 w-[660px] -rotate-[1.5deg] drop-shadow-[0_12px_18px_rgba(40,20,0,0.4)]"
     >
       <div className="torn-bottom bg-paper flex flex-col gap-1.5 px-[52px] pt-11 pb-[60px]">
