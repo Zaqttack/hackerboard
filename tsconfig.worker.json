@@ -17,5 +17,5 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/worker"]
+  "include": ["src/worker", "src/shared"]
 }

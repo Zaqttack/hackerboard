@@ -1,1 +1,100 @@
 @import "tailwindcss";
+@import "@fontsource/caveat-brush/400.css";
+@import "@fontsource/kalam/700.css";
+@import "@fontsource/special-elite/400.css";
+@import "@fontsource/zilla-slab/500.css";
+@import "@fontsource/zilla-slab/700.css";
+
+@theme {
+  --color-cork: #b8864b;
+  --color-cork-edge: #9a6b36;
+  --color-paper: #f3f0e7;
+  --color-paper-shade: #e2dccd;
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #4a4540;
+  --color-string: #b3261e;
+  --color-string-dark: #8f1d17;
+  --color-string-tint: #fbedea;
+  --color-tape: #e8c85a;
+  --color-success: #2f6b3a;
+  --color-pin-hi: #e25a50;
+  --color-pin-mid: #b3261e;
+  --color-pin-lo: #6e1510;
+  --color-bauble-paper: #f3f0e7;
+  --color-bauble-tape: #e8c85a;
+  --color-bauble-manila: #dcc395;
+  --color-bauble-carbon: #bcd2e8;
+  --color-bauble-memo: #f1b9b1;
+  --color-bauble-mint: #c4e0c0;
+
+  --font-display: "Caveat Brush", cursive;
+  --font-hand: "Kalam", cursive;
+  --font-stamp: "Special Elite", monospace;
+  --font-body: "Zilla Slab", serif;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+
+  --shadow-paper: 0 12px 18px rgba(40, 20, 0, 0.4);
+  --shadow-bauble: 0 6px 0 rgba(26, 26, 26, 0.2), 0 14px 22px rgba(40, 20, 0, 0.38);
+  --shadow-press: 0 5px 0 #1a1a1a;
+  --shadow-string: 0 3px 3px rgba(0, 0, 0, 0.28);
+
+  --ease-fall: cubic-bezier(0.55, 0, 1, 0.45);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@layer base {
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 4px solid var(--color-tape);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .cork {
+    background-color: var(--color-cork);
+    background-image:
+      radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 55%, rgba(80, 45, 10, 0.38) 100%),
+      radial-gradient(rgba(70, 40, 10, 0.38) 1.2px, transparent 1.7px),
+      radial-gradient(rgba(255, 230, 190, 0.28) 1px, transparent 1.5px),
+      radial-gradient(rgba(90, 55, 20, 0.28) 2px, transparent 2.7px);
+    background-size: 100% 100%, 13px 11px, 17px 19px, 41px 37px;
+    background-position: 0 0, 0 0, 6px 9px, 20px 4px;
+  }
+
+  .cork-edge {
+    background-color: var(--color-cork-edge);
+    background-image:
+      radial-gradient(rgba(70, 40, 10, 0.38) 1.2px, transparent 1.7px),
+      radial-gradient(rgba(255, 230, 190, 0.28) 1px, transparent 1.5px),
+      radial-gradient(rgba(90, 55, 20, 0.28) 2px, transparent 2.7px);
+    background-size: 13px 11px, 17px 19px, 41px 37px;
+    background-position: 0 0, 6px 9px, 20px 4px;
+  }
+
+  .pin {
+    border-radius: 9999px;
+    background: radial-gradient(circle at 35% 30%, var(--color-pin-hi), var(--color-pin-mid) 55%, var(--color-pin-lo));
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.45);
+  }
+
+  .tape {
+    background: rgba(232, 200, 90, 0.94);
+    clip-path: polygon(2% 0, 98% 4%, 100% 30%, 97% 55%, 100% 80%, 97% 100%, 3% 96%, 0 70%, 3% 45%, 0 18%);
+  }
+
+  .torn-bottom {
+    clip-path: polygon(0 0, 100% 0, 100% 92%, 97% 96%, 94% 91%, 90% 97%, 86% 93%, 82% 98%, 77% 92%, 73% 97%, 68% 93%, 63% 99%, 58% 94%, 53% 98%, 48% 92%, 43% 97%, 38% 93%, 33% 98%, 28% 92%, 23% 97%, 18% 94%, 13% 99%, 8% 93%, 4% 97%, 0 94%);
+  }
+}
