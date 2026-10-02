@@ -98,3 +98,110 @@
     clip-path: polygon(0 0, 100% 0, 100% 92%, 97% 96%, 94% 91%, 90% 97%, 86% 93%, 82% 98%, 77% 92%, 73% 97%, 68% 93%, 63% 99%, 58% 94%, 53% 98%, 48% 92%, 43% 97%, 38% 93%, 33% 98%, 28% 92%, 23% 97%, 18% 94%, 13% 99%, 8% 93%, 4% 97%, 0 94%);
   }
 }
+
+@keyframes arrive {
+  0% {
+    translate: 0 -160px;
+    opacity: 0;
+    scale: 1;
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+  54% {
+    translate: 0 0;
+    opacity: 1;
+    scale: 1.18 0.82;
+    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  100% {
+    translate: 0 0;
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes pin-push {
+  from {
+    scale: 1.6;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+@keyframes ring-burst {
+  from {
+    scale: 0.7;
+    opacity: 1;
+  }
+  to {
+    scale: 1.5;
+    opacity: 0;
+  }
+}
+
+@keyframes stamp-slam {
+  0% {
+    scale: 2;
+    opacity: 0;
+  }
+  9% {
+    scale: 1;
+    opacity: 1;
+  }
+  79% {
+    scale: 1;
+    opacity: 1;
+  }
+  100% {
+    scale: 1;
+    opacity: 0;
+  }
+}
+
+@keyframes tick {
+  from {
+    scale: 1.25;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+@keyframes breathe {
+  from {
+    scale: 1;
+  }
+  to {
+    scale: 1.03;
+  }
+}
+
+@layer components {
+  .anim-arrive {
+    animation: arrive 480ms backwards;
+  }
+
+  .anim-pin-push {
+    animation: pin-push 160ms 300ms cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  }
+
+  .anim-ring-1 {
+    animation: ring-burst 650ms 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .anim-ring-2 {
+    animation: ring-burst 650ms 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .anim-stamp {
+    animation: stamp-slam 1950ms 850ms linear both;
+  }
+
+  .anim-tick {
+    animation: tick 200ms 850ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .anim-breathe {
+    animation: breathe 2400ms ease-in-out infinite alternate;
+  }
+}

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Stamp } from "./Stamp.tsx";
 import { Tape } from "./Tape.tsx";
 
@@ -8,6 +9,12 @@ type HeroProps = {
 
 export function Hero({ count, total = 50 }: HeroProps) {
   const counter = count >= total ? `FULL HOUSE ${total} / ${total}` : `RECRUITS ${count} / ${total}`;
+  const previous = useRef(count);
+  const grew = count > previous.current;
+
+  useEffect(() => {
+    previous.current = count;
+  }, [count]);
 
   return (
     <div
@@ -19,7 +26,9 @@ export function Hero({ count, total = 50 }: HeroProps) {
           Scan to join the crew →
         </p>
         <div className="mt-3.5 flex items-center gap-5">
-          <Stamp text={counter} />
+          <div key={count} className={grew ? "anim-tick" : ""}>
+            <Stamp text={counter} />
+          </div>
           <div className="font-stamp text-xl tracking-[3px]">CASE NO. XII</div>
         </div>
       </div>
