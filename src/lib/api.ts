@@ -46,9 +46,9 @@ export async function signUp(name: string, turnstileToken: string | null): Promi
   throw new NetworkError();
 }
 
-export type FirstRecruit = { name: string; emoji: string; createdAt: number };
+export type Recruit = { name: string; emoji: string; createdAt: number };
 
-export type AdminStats = { onBoard: number; recruited: number; first: FirstRecruit[] };
+export type AdminStats = { onBoard: number; recruited: number; entries: Recruit[] };
 
 export async function adminStats(passphrase: string): Promise<AdminStats | null> {
   const response = await post("/api/admin/stats", { passphrase });

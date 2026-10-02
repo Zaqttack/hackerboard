@@ -105,24 +105,28 @@ export function AdminPanel(props: AdminPanelProps) {
             <Stat label="RECRUITED">{stats.recruited}</Stat>
           </div>
           <div className="flex flex-col gap-2">
-            <span className="font-stamp text-ink-soft text-[15px] tracking-[2px]">FIRST 20 IN</span>
-            {stats.first.length === 0 ? (
+            <span className="font-stamp text-ink-soft text-[15px] tracking-[2px]">EVERYONE, IN ORDER</span>
+            {stats.entries.length === 0 ? (
               <p className="text-ink-soft m-0 text-lg font-medium">Nobody yet.</p>
             ) : (
-              <ol className="border-ink m-0 max-h-[300px] list-none overflow-y-auto rounded-md border-2 bg-white p-0">
-                {stats.first.map((recruit, index) => (
-                  <li
-                    key={`${recruit.createdAt}-${index}`}
-                    className="border-ink/15 flex items-center gap-3 border-b px-3 py-1.5 last:border-b-0"
-                  >
-                    <span className="font-stamp text-ink-soft w-7 text-right text-base">{index + 1}</span>
-                    <span className="text-2xl leading-none">{recruit.emoji}</span>
-                    <span className="font-hand flex-grow pt-1 text-xl leading-none font-bold">{recruit.name}</span>
-                    <span className="font-stamp text-ink-soft text-sm">
-                      {elapsed(recruit.createdAt, stats.first[0].createdAt)}
-                    </span>
-                  </li>
-                ))}
+              <ol className="border-ink m-0 max-h-[360px] list-none overflow-y-auto rounded-md border-2 bg-white p-0">
+                {stats.entries.map((recruit, index) => {
+                  const bumped = index < stats.recruited - stats.onBoard;
+                  return (
+                    <li
+                      key={`${recruit.createdAt}-${index}`}
+                      className={`border-ink/15 flex items-center gap-3 border-b px-3 py-1.5 last:border-b-0 ${bumped ? "opacity-50" : ""}`}
+                    >
+                      <span className="font-stamp text-ink-soft w-9 text-right text-base">{index + 1}</span>
+                      <span className="text-2xl leading-none">{recruit.emoji}</span>
+                      <span className="font-hand flex-grow pt-1 text-xl leading-none font-bold">{recruit.name}</span>
+                      {bumped && <span className="font-stamp text-string text-xs tracking-[1px]">OFF</span>}
+                      <span className="font-stamp text-ink-soft text-sm">
+                        {elapsed(recruit.createdAt, stats.entries[0].createdAt)}
+                      </span>
+                    </li>
+                  );
+                })}
               </ol>
             )}
           </div>

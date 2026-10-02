@@ -11,7 +11,7 @@ interface Env {
 }
 
 const MAX_BODY = 2048;
-const FIRST_COUNT = 20;
+const LIST_LIMIT = 1000;
 
 const COLUMNS = "id, name, emoji, fill, tied_to AS tiedTo, created_at AS createdAt";
 
@@ -90,13 +90,13 @@ async function adminStats(request: Request, env: Env): Promise<Response> {
   if (!isAdmin(await readBody(request), env)) return json({ error: "unauthorized" }, 401);
 
   const row = await env.DB.prepare("SELECT COUNT(*) AS total FROM entries").first<{ total: number }>();
-  const { results: first } = await env.DB.prepare(
+  const { results: entries } = await env.DB.prepare(
     "SELECT name, emoji, created_at AS createdAt FROM entries ORDER BY created_at ASC LIMIT ?",
   )
-    .bind(FIRST_COUNT)
+    .bind(LIST_LIMIT)
     .all<{ name: string; emoji: string; createdAt: number }>();
   const recruited = row?.total ?? 0;
-  return json({ onBoard: Math.min(recruited, MAX_RECRUITS), recruited, first });
+  return json({ onBoard: Math.min(recruited, MAX_RECRUITS), recruited, entries });
 }
 
 async function adminWipe(request: Request, env: Env): Promise<Response> {
