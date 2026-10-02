@@ -48,14 +48,7 @@ jobs:
 
       - name: Name the deployment after the branch
         id: names
-        run: |
-          if [ "$GITHUB_REF_NAME" = "main" ]; then
-            NAME="hackerboard"
-          else
-            SLUG=$(printf '%s' "$GITHUB_REF_NAME" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//' | cut -c1-40 | sed -E 's/-+$//')
-            NAME="hackerboard-$SLUG"
-          fi
-          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+        run: echo "name=$(.github/scripts/deployment-name.sh "$GITHUB_REF_NAME")" >> "$GITHUB_OUTPUT"
 
       - name: Find or create the D1 database
         id: db

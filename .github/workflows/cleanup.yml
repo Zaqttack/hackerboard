@@ -1,0 +1,29 @@
+name: Clean up deleted branch
+
+on: delete
+
+jobs:
+  cleanup:
+    name: Delete Worker and database
+    runs-on: ubuntu-latest
+    if: github.event.ref_type == 'branch' && (startsWith(github.event.ref, 'demo') || startsWith(github.event.ref, 'rehearsal'))
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - run: corepack enable pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Delete the branch's Worker and D1 database
+        env:
+          BRANCH: ${{ github.event.ref }}
+        run: |
+          NAME=$(.github/scripts/deployment-name.sh "$BRANCH")
+          pnpm exec wrangler delete --name "$NAME" --force
+          pnpm exec wrangler d1 delete "$NAME" --skip-confirmation

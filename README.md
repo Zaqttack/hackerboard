@@ -43,3 +43,5 @@ Each deployment has its own database, so test data never touches `main`.
 - `/` the board
 - `/join` add yourself from your phone
 - `/admin` wipe the board (passphrase)
+
+Deleting a `demo*` or `rehearsal*` branch deletes its Worker and database (see `cleanup.yml`).

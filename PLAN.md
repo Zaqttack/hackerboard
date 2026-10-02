@@ -57,7 +57,7 @@ Deploys go through GitHub Actions only (same pattern as srcprint: Workers + `clo
 
 ## Per-branch deploys
 `deploy.yml` derives everything from the branch name: slug -> Worker name (`hackerboard` on main, else `hackerboard-<slug>`) and D1 database name (same). The workflow creates the D1 database if missing and injects its `database_id` into the config before `wrangler deploy --name`. No per-branch config files, and forks need no manual `d1 create`. Only `main`, `demo*`, and `rehearsal*` deploy. Each branch has its own database, so rehearsal data never touches `main`.
-To verify during build: create-if-missing D1 in CI (`wrangler d1 list --json` + `jq`) works with the token's scopes. Fallback: one hand-made database per long-lived branch.
+Verified 2026-10-02: create-if-missing D1 in CI (`wrangler d1 list --json` + `jq`) works with the token's scopes. `main` -> `hackerboard.zaquariah.workers.dev`, `rehearsal-0` -> `hackerboard-rehearsal-0.zaquariah.workers.dev`, each smoke-tested via `/api/health`.
 
 ## Demo arc (~25 min, prepared prompts + a few custom)
 See "Live boundary" for the acts, in order: board UI (local), deploy static, API + join + admin + protections (audience joins), physics and motion.
