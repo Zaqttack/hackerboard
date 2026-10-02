@@ -103,6 +103,11 @@ function pinOf(sim: Sim) {
   };
 }
 
+function rescale(body: Body, x: number, y: number) {
+  Body.scale(body, x, y);
+  Body.setInertia(body, Number.POSITIVE_INFINITY);
+}
+
 function setSpeed(body: Body, x: number, y: number) {
   Body.setVelocity(body, { x: x / 60, y: y / 60 });
 }
@@ -204,6 +209,26 @@ function writeTransform(sim: Sim, now: number, world: World) {
   sim.el.style.transform = `translate3d(${x - sim.w0 / 2}px, ${y - HEIGHT / 2}px, 0) rotate(${angle}deg) scale(${sim.scale})`;
 }
 
+function freeSpot(world: World, width: number, height: number, fallback: { x: number; y: number }) {
+  const taken = [...world.walls, ...[...world.sims.values()].filter((sim) => !sim.exit).map((sim) => sim.body)];
+
+  for (let attempt = 0; attempt < 300; attempt++) {
+    const x = 40 + Math.random() * (1840 - width);
+    const y = 40 + Math.random() * (1000 - height);
+    const slack = attempt < 150 ? 0 : 12;
+    const clear = taken.every(
+      ({ bounds }) =>
+        x + width < bounds.min.x + slack ||
+        x > bounds.max.x - slack ||
+        y + height < bounds.min.y + slack ||
+        y > bounds.max.y - slack,
+    );
+    if (clear) return { x, y };
+  }
+
+  return fallback;
+}
+
 function removeSim(world: World, sim: Sim) {
   Composite.remove(world.engine.world, sim.body);
   world.bodies.delete(sim.body.id);
@@ -272,9 +297,12 @@ export function usePhysics({ layer, svg, dings, shown, leaving, newIds }: Option
       const w0 = el.offsetWidth;
       const variation = placed.variation;
       const scale = scaleFor(world.appliedTier, variation);
+      const spot = newIds.has(id)
+        ? freeSpot(world, w0 * scale, HEIGHT * scale, placed)
+        : placed;
       const body = Bodies.rectangle(
-        placed.x + (w0 * scale) / 2,
-        placed.y + (HEIGHT * scale) / 2,
+        spot.x + (w0 * scale) / 2,
+        spot.y + (HEIGHT * scale) / 2,
         w0,
         HEIGHT,
         {
@@ -283,10 +311,9 @@ export function usePhysics({ layer, svg, dings, shown, leaving, newIds }: Option
           friction: 0,
           frictionStatic: 0,
           frictionAir: 0,
-          inertia: Number.POSITIVE_INFINITY,
         },
       );
-      Body.scale(body, scale, scale);
+      rescale(body, scale, scale);
 
       const heading = Math.random() * Math.PI * 2;
       const speed = MIN_SPEED + Math.random() * (SPAWN_MAX_SPEED - MIN_SPEED);
@@ -476,7 +503,7 @@ export function usePhysics({ layer, svg, dings, shown, leaving, newIds }: Option
           const t = (time - anim.start) / anim.dur;
           if (t >= 0) {
             const next = t >= 1 ? anim.to : anim.from + (anim.to - anim.from) * anim.ease(t);
-            Body.scale(sim.body, next / sim.scale, next / sim.scale);
+            rescale(sim.body, next / sim.scale, next / sim.scale);
             sim.scale = next;
             if (t >= 1) sim.scaleAnim = null;
           }
@@ -533,7 +560,7 @@ export function usePhysics({ layer, svg, dings, shown, leaving, newIds }: Option
       for (const sim of world.sims.values()) {
         const width = sim.el.offsetWidth;
         if (Math.abs(width - sim.w0) > 1) {
-          Body.scale(sim.body, width / sim.w0, 1);
+          rescale(sim.body, width / sim.w0, 1);
           sim.w0 = width;
         }
       }
