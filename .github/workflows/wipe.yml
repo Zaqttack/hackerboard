@@ -24,4 +24,5 @@ jobs:
       - name: Delete every entry in this branch's database
         run: |
           NAME=$(.github/scripts/deployment-name.sh "$GITHUB_REF_NAME")
+          .github/scripts/point-wrangler.sh "$NAME"
           pnpm exec wrangler d1 execute "$NAME" --remote --command "DELETE FROM entries"

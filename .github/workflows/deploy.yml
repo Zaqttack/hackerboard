@@ -50,31 +50,10 @@ jobs:
         id: names
         run: echo "name=$(.github/scripts/deployment-name.sh "$GITHUB_REF_NAME")" >> "$GITHUB_OUTPUT"
 
-      - name: Find or create the D1 database
-        id: db
-        env:
-          NAME: ${{ steps.names.outputs.name }}
-        run: |
-          find_id() {
-            pnpm exec wrangler d1 list --json | jq -r --arg n "$NAME" '.[] | select(.name == $n) | (.uuid // .database_id // .id)'
-          }
-          ID=$(find_id)
-          if [ -z "$ID" ]; then
-            pnpm exec wrangler d1 create "$NAME"
-            ID=$(find_id)
-          fi
-          test -n "$ID"
-          echo "id=$ID" >> "$GITHUB_OUTPUT"
-
       - name: Point wrangler.jsonc at this branch's Worker and database
         env:
           NAME: ${{ steps.names.outputs.name }}
-          DB_ID: ${{ steps.db.outputs.id }}
-        run: |
-          jq --arg name "$NAME" --arg id "$DB_ID" \
-            '.name = $name | .d1_databases[0].database_name = $name | .d1_databases[0].database_id = $id' \
-            wrangler.jsonc > wrangler.tmp
-          mv wrangler.tmp wrangler.jsonc
+        run: .github/scripts/point-wrangler.sh "$NAME" --create
 
       - name: Choose Turnstile keys
         env:
