@@ -46,4 +46,4 @@ Each deployment has its own database, so test data never touches `main`.
 - `/join` add yourself from your phone
 - `/admin` wipe the board (passphrase)
 
-Deleting a `demo*` or `rehearsal*` branch deletes its Worker and database (see `cleanup.yml`).
+Deleting a `demo*` or `rehearsal*` branch deletes its Worker and database (see `cleanup.yml`). To empty a branch's board without the admin page, run the **Wipe board** workflow on that branch.

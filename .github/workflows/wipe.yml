@@ -1,0 +1,27 @@
+name: Wipe board
+
+on:
+  workflow_dispatch:
+
+jobs:
+  wipe:
+    name: Delete all entries
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'main' || startsWith(github.ref_name, 'demo') || startsWith(github.ref_name, 'rehearsal')
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - run: corepack enable pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Delete every entry in this branch's database
+        run: |
+          NAME=$(.github/scripts/deployment-name.sh "$GITHUB_REF_NAME")
+          pnpm exec wrangler d1 execute "$NAME" --remote --command "DELETE FROM entries"
