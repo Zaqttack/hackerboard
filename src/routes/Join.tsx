@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { JoinForm, type JoinStatus } from "../components/JoinForm.tsx";
 import { JoinResult } from "../components/JoinResult.tsx";
 import { Tape } from "../components/Tape.tsx";
-import { fetchMe, NetworkError, signUp } from "../lib/api.ts";
+import { fetchOnBoard, NetworkError, signUp } from "../lib/api.ts";
 import { animalName } from "../shared/animals.ts";
 import { NAME_MAX } from "../shared/constants.ts";
 import type { Entry } from "../shared/types.ts";
@@ -46,7 +46,7 @@ export function Join() {
       return;
     }
 
-    fetchMe(stored.id)
+    fetchOnBoard(stored.id)
       .then((current) => {
         if (current) {
           setEntry(current);

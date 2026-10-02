@@ -212,10 +212,10 @@ function writeTransform(sim: Sim, now: number, world: World) {
 function freeSpot(world: World, width: number, height: number, fallback: { x: number; y: number }) {
   const taken = [...world.walls, ...[...world.sims.values()].filter((sim) => !sim.exit).map((sim) => sim.body)];
 
-  for (let attempt = 0; attempt < 300; attempt++) {
+  for (let attempt = 0; attempt < 1500; attempt++) {
     const x = 40 + Math.random() * (1840 - width);
     const y = 40 + Math.random() * (1000 - height);
-    const slack = attempt < 150 ? 0 : 12;
+    const slack = attempt < 750 ? 0 : 12;
     const clear = taken.every(
       ({ bounds }) =>
         x + width < bounds.min.x + slack ||
@@ -289,17 +289,20 @@ export function usePhysics({ layer, svg, dings, shown, leaving, newIds }: Option
     if (world.walls.length === 0) rebuildWalls(world, layerEl);
     if (world.appliedTier === null) world.appliedTier = tierScale(shown.length);
 
-    for (const placed of shown) {
+    const fresh = shown.filter((p) => !world.sims.has(p.entry.id) && els.current.has(p.entry.id));
+    if (world.sims.size === 0) {
+      fresh.sort((a, b) => (els.current.get(b.entry.id)?.offsetWidth ?? 0) - (els.current.get(a.entry.id)?.offsetWidth ?? 0));
+    }
+
+    for (const placed of fresh) {
       const id = placed.entry.id;
       const el = els.current.get(id);
-      if (world.sims.has(id) || !el) continue;
+      if (!el) continue;
 
       const w0 = el.offsetWidth;
       const variation = placed.variation;
       const scale = scaleFor(world.appliedTier, variation);
-      const spot = newIds.has(id)
-        ? freeSpot(world, w0 * scale, HEIGHT * scale, placed)
-        : placed;
+      const spot = freeSpot(world, w0 * scale, HEIGHT * scale, placed);
       const body = Bodies.rectangle(
         spot.x + (w0 * scale) / 2,
         spot.y + (HEIGHT * scale) / 2,

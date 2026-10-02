@@ -24,11 +24,12 @@ export async function fetchWall(): Promise<Entry[]> {
   return response.json();
 }
 
-export async function fetchMe(id: string): Promise<Entry | null> {
+export async function fetchOnBoard(id: string): Promise<Entry | null> {
   const response = await call(`/api/me?id=${encodeURIComponent(id)}`, { cache: "no-store" });
   if (response.status === 404) return null;
   if (!response.ok) throw new NetworkError();
-  return response.json();
+  const entry = (await response.json()) as Entry & { onBoard: boolean };
+  return entry.onBoard ? entry : null;
 }
 
 export type SignResult =

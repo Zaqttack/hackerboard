@@ -1,95 +1,63 @@
-# RowdyHacks XII — Build a Website with AI (demo plan)
+# Hackerboard (RowdyHacks XII talk: build a website with AI)
 
-Name: hackerboard
+## Status
+`main` is built, deployed and being polished. Talk material (prompts, tags, `demo-start`, rehearsals) has NOT been started: nothing from "Talk plan" below happens until `main` is signed off.
+
+Live: https://hackerboard.zaquariah.workers.dev (repo `Zaqttack/hackerboard`, public).
 
 ## Idea
-A hacker board for RowdyHacks XII, built live with Claude. The root page is projected on a desktop display: a hero with a QR code and instructions, and every attendee who joins appears as a floating bauble (emoji + name) placed around the screen.
+A hacker board for RowdyHacks XII. The root page is projected on a desktop display: hero, QR code, and every attendee who joins appears as a floating bauble (animal emoji + name) pinned to a cork board. Design is a detective cork board / heist case file, original CSS/SVG only, no RowdyHacks art.
 
 ## Pages
-- `/` — projected board: hero, QR code (top corner) + short instructions, floating baubles. Polls `GET /api/wall` every ~4s.
-- `/join` — phone form: name only (max 20 chars). On success shows "you're in" + assigned emoji. localStorage flag prevents repeat signing.
-- `/admin` — one button to wipe all entries. Gated by a passphrase checked server-side (`ADMIN_KEY` Worker secret).
+- `/` board. Fixed 1920×1080 stage scaled to fit. Polls `GET /api/wall` every 4s. Hero with recruit counter (`FULL HOUSE 50 / 50` at the cap), QR card (encodes `origin + /join` at runtime), empty-state ghost, matter.js drift, red strings between tied baubles, density tiers, dings, 51st-join exit, reduced-motion variant.
+- `/join` phone form: name only, 1 to 20 characters, live preview, Turnstile, every state from the design (typing, empty, submitting, rejected, unverified, network, success, already).
+- `/admin` passphrase gate, stats (ON BOARD / RECRUITED), a list of everyone in join order with time since the first join (`+m:ss`) and an `OFF` marker for anyone bumped off the board, and a confirmed wipe.
 
 ## Stack
-- Vite + React + TypeScript + Tailwind, pnpm
-- Cloudflare (Workers static assets or Pages — confirm at setup) + one Worker/Function
-- D1 (SQLite) for entries. Not KV: KV reads can be stale ~60s at other edges.
-- Turnstile added as the final prompt of the talk (on in `main`)
+Vite, React 19, TypeScript, Tailwind v4, react-router-dom, matter-js, `qrcode.react`, `obscenity`, `@fontsource` fonts (bundled). One Cloudflare Worker (`src/worker/index.ts`) serving `/api/*` and static assets from `dist/`, D1 for data. pnpm. Vitest.
 
 ## API
-- `GET /api/wall` — `Entry[]` = `{ id, name, emoji, fill, tiedTo, createdAt }`, 50 newest, oldest first
-- `POST /api/sign` — `{ name, turnstileToken? }`; server trims, collapses spaces, 1–20 chars, blocklist-filters, picks emoji + fill (fill never repeats the previous entry's) + `tied_to` (see DESIGN.md "Strings"), inserts, returns the entry
-- `POST /api/admin/stats` — passphrase must match `ADMIN_KEY`; returns `{ onBoard, recruited }` (the unlock step; wrong passphrase = 401)
-- `POST /api/admin/wipe` — passphrase must match `ADMIN_KEY`; deletes all rows
+- `GET /api/wall` the 50 newest `Entry` rows `{ id, name, emoji, fill, tiedTo, createdAt }`, oldest first.
+- `POST /api/sign` `{ name, turnstileToken }`. Validates (trim, collapse spaces, strip control and zero-width characters, 1 to 20 code points), blocklist, Turnstile. Picks emoji, fill (never the previous entry's) and `tied_to`. 400 invalid, 422 rejected, 403 turnstile, 201 created. Never rejects because the board is full.
+- `GET /api/me?id=` entry plus `onBoard` (false once 50 newer entries exist). 404 if the row is gone.
+- `POST /api/admin/stats` `{ passphrase }` returns `{ onBoard, recruited, entries[] }` (up to 1000, oldest first). 401 on a wrong passphrase.
+- `POST /api/admin/wipe` `{ passphrase }`.
+- `GET /api/health` used by the deploy smoke test.
 
-No per-IP rate limiting (venue wifi shares one IP). Use Turnstile + client-side "already signed" flag.
+## Behavior decisions
+- The board is a rolling window, not a capped list. Everyone is accepted; when a 51st joins, the oldest bauble falls off. Recruited count keeps rising.
+- A phone whose entry has been bumped off (or wiped) sees the form again and may rejoin. Token is the entry id in localStorage, checked via `/api/me`.
+- No per-IP rate limiting (venue wifi shares one IP). Protection is Turnstile, the blocklist and the 20-character cap.
+- The blocklist is the `obscenity` defaults. It flags a few real names (for example "Dick", "Analise"). Accepted.
+- One bauble never overlaps another: physics bodies keep zero rotation (Matter resets inertia on every scale, so it is re-applied after each `Body.scale`); arrivals and the first load are placed in free space using live body bounds, widest first.
+- Poll failure on the board keeps the last state silently.
+- Unknown URLs render the board.
 
 ## Data
-One D1 table `entries(id, name, emoji, fill, tied_to NULL, created_at)`. Lives in the Cloudflare account, not the repo. Each branch deploy has its own database (see Per-branch deploys). Terminal wipe: `pnpm dlx wrangler d1 execute <db-name> --remote --command "DELETE FROM entries"`.
+D1 table `entries(id, name, emoji, fill, tied_to, created_at)` in `migrations/0001_entries.sql`. Each branch deployment has its own database.
 
-## Assets
-Emoji only. ~30 curated animals. No third-party art in the repo. The RowdyHacks PNGs in the project root are not used and are gitignored.
+## Deploys (GitHub Actions only)
+- `deploy.yml` on push to `main`, `demo*`, `rehearsal*` (and manual dispatch): typecheck + Vitest gate, then names the Worker and D1 database from the branch (`hackerboard` on main, `hackerboard-<slug>` elsewhere), creates the database if missing, rewrites `wrangler.jsonc` in CI via `.github/scripts/point-wrangler.sh`, builds, applies migrations, deploys, sets secrets, smoke-tests `/api/health`.
+- `cleanup.yml` deletes a branch's Worker and database when a `demo*` or `rehearsal*` branch is deleted.
+- `wipe.yml` (manual dispatch) empties the board of the branch it runs on, using the Cloudflare credentials in GitHub (no admin passphrase needed).
+- Secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ADMIN_KEY`, `TURNSTILE_SECRET`. Variable: `VITE_TURNSTILE_SITE_KEY`.
+- Turnstile: `main` uses the real widget (hostname `hackerboard.zaquariah.workers.dev`). If either value is missing, `main` runs with no captcha. Every other branch always uses Cloudflare's always-pass test keys.
+- Local dev: `pnpm dev` (UI only) or `pnpm run cf:dev` (Worker + local D1; copy `.dev.vars.example` to `.dev.vars`).
 
-## Design
-Done. Source of truth is `docs/hackerboard/DESIGN.md` (tokens, board, motion, join, admin, components, build order) with artboards in `docs/hackerboard/design-source/`. `docs/` ships in `demo-start` and `CLAUDE.md` points at it, so Claude reads the spec live. Open in the spec: matter.js vs hand-rolled physics.
-Original brief, kept for reference: `DESIGN-PROMPT.md`.
+## Verified on `main`
+- Production: empty state; two recruits joining through the real Turnstile widget; Turnstile enforced server-side (403 without a token); deploy and wipe workflows.
+- Local browser checks: first load with 50 (0 overlaps from the first frame), incremental fill to 50 and the tier shrink, the 51st-join fall, a burst of 20 simultaneous joins on a full board, reduced motion (no drift, strings drawn), join error states (network, Turnstile 403, rejected name not echoed), the bumped-off phone returning to the form, admin offline error, admin list with OFF markers.
+- 17 unit tests: name validation and blocklist, fill and tie picking, elapsed formatting.
 
-Prompt for Claude Design is in `DESIGN-PROMPT.md` (palette and RowdyHacks screenshots as inspiration; attach the screenshots when running it). Direction: detective cork board / heist case file (cork, paper, red string, tape, stamps), original CSS/SVG only, no RowdyHacks art. Flashy floating baubles (physics: soft collisions, e.g. matter.js with zero gravity; decided after seeing the design), desktop display.
+## Not verified / open
+- Admin with the real passphrase on production (only the owner can).
+- Arrival animation and string draw observed live in a foreground tab on production.
+- OG preview image (only title and description tags exist).
 
-## Setup checklist
-Deploys go through GitHub Actions only (same pattern as srcprint: Workers + `cloudflare/wrangler-action`, pnpm). The CLI is only for local `wrangler dev` (local D1 simulation, no login needed).
-- [ ] GitHub repo (public, personal account)
-- [ ] Cloudflare account (free)
-- [ ] API token (Workers Scripts edit + D1 edit) and account ID
-- [ ] GitHub repo secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ADMIN_KEY`, later `TURNSTILE_SECRET` (pushed to the Worker by wrangler-action's `secrets` input)
-- [ ] GitHub repo variable: `VITE_TURNSTILE_SITE_KEY` (public)
-- [ ] Workflow `deploy.yml` (see Per-branch deploys): create D1 if missing -> typecheck + build -> `d1 migrations apply --remote` -> deploy; `workflow_dispatch` for manual reruns
-- [ ] Pipeline stays lean (no e2e; slow pipelines drag on stage). Open: lint + unit as a parallel non-gating job, or gating only if under ~1 min
-- [ ] README "Deploy your own": fork, create token + note account ID, add the 3 secrets, push to `main` or run the workflow
-- [ ] Rehearse on a `rehearsal-N` branch, then wipe
-
-## Branches / tags
-- `main` — finished, shareable. Deploys Worker `hackerboard`.
-- `demo` — the live build, branched from tag `demo-start`. Deploys `hackerboard-demo`.
-- `rehearsal*` — dry runs, branched from `demo-start` (e.g. `rehearsal-1`). Deploys `hackerboard-rehearsal-1`.
-- Tags: `demo-start` (scaffold only: Vite, Tailwind, design tokens, CLAUDE.md, workflow, README) and `act-1`..`act-4` (recovery checkpoints)
-- Never force push: for a fresh run, branch from the tag under a new name.
-
-## Per-branch deploys
-`deploy.yml` derives everything from the branch name: slug -> Worker name (`hackerboard` on main, else `hackerboard-<slug>`) and D1 database name (same). The workflow creates the D1 database if missing and injects its `database_id` into the config before `wrangler deploy --name`. No per-branch config files, and forks need no manual `d1 create`. Only `main`, `demo*`, and `rehearsal*` deploy. Each branch has its own database, so rehearsal data never touches `main`.
-Verified 2026-10-02: create-if-missing D1 in CI (`wrangler d1 list --json` + `jq`) works with the token's scopes. `main` -> `hackerboard.zaquariah.workers.dev`, `rehearsal-0` -> `hackerboard-rehearsal-0.zaquariah.workers.dev`, each smoke-tested via `/api/health`.
-
-## Demo arc (~25 min, prepared prompts + a few custom)
-See "Live boundary" for the acts, in order: board UI (local), deploy static, API + join + admin + protections (audience joins), physics and motion.
-
-Fallback: phone hotspot.
-
-## Live boundary
-- In `demo-start` (pre-seeded): scaffold, `deploy.yml`, secrets, README, `CLAUDE.md`, `docs/`, Tailwind tokens + fonts, cork background CSS, primitives (Stamp, pushpin, tape, torn paper), Hero, QRCard (`qrcode.react`), static Bauble. Deploy `demo-start` once before the talk so the `hackerboard-demo` Worker and D1 exist (then wipe).
-- Built live, in this order (nothing public-writable ships without its protections):
-  1. Board from the seeded pieces (hardcoded baubles + arrival CSS animation), local only.
-  2. Push: deploy the static board. No API yet, so nothing to attack.
-  3. Worker + D1 + `/join` + `/admin` + board polling, shipped together with validation, the blocklist, Vitest tests (gating, seconds), the `ADMIN_KEY` passphrase, and Turnstile. One deploy, then the audience joins.
-  4. matter.js drift + strings + the rest of DESIGN.md section 3 (tiers, dings, 51st-join exit, reduced motion). Pure client, zero risk, safe to cut or shorten if time runs out. The audience is already on the board, so the board comes alive while they watch.
-- Goal: after all acts, `demo` is functionally identical to `main`. `main` is the same build done ahead of time (and the fallback if an act goes sideways). Nothing is `main`-only.
-- Physics: matter.js, zero gravity, rendered via DOM transforms.
-- Fonts: bundled with `@fontsource` packages (Caveat Brush, Kalam, Special Elite, Zilla Slab).
-- Act 1 is local only (`pnpm dev`): static board, hardcoded baubles, arrival animation replayable (e.g. a dev-only trigger), `/join` form UI with no backend yet. Nothing works for real until act 3.
-- Each act = one prepared prompt plus optional follow-ups. `/clear` between acts to keep context lean.
-- `prompts/act-N.md` live in `main` only; they double as a takeaway.
-
-## Gaps beyond DESIGN.md (defaults, confirm)
-- "Already on the board" must be validated server-side. The token is the server-generated entry id in localStorage; `GET /api/me?id=` checks it against D1 and the client clears the token if the row is gone (e.g. after a wipe).
-- QR card: drop the URL text line from the spec. QR + "Scan to join" only. The QR encodes `window.location.origin + '/join'` at runtime, so the URL never needs to be known before deploy and no custom domain is needed.
-- Bauble colliders use measured DOM width (ResizeObserver), not the 220–470 estimate. Wide glyphs (CJK, emoji in names) and zero-width/control characters: normalize and strip on the server.
-- Blocklist: use an npm package (e.g. `obscenity`) rather than a word list in a public repo; covered by Vitest.
-- Board poll failure: keep the last known state silently, retry next tick. No UI.
-- Not designed, small: Turnstile failed/expired state on `/join`; admin wipe network error; 404 route (SPA fallback to `/`); favicon, `<title>`, OG image (main is shareable); input attrs (`autocomplete=off`, `autocapitalize=words`, `enterkeyhint=done`); MIT LICENSE.
-- Turnstile: `main` uses the real widget (repo secret `TURNSTILE_SECRET`, repo variable `VITE_TURNSTILE_SITE_KEY`); if either is missing `main` runs with no captcha. Every other branch always uses Cloudflare's always-pass test keys, so no hostname allowlist is needed.
-
-## Other decisions
-- QR code generated client-side from `window.location` with `qrcode.react` (SVG). The audience scans whichever deploy is on screen (`demo`; `main` is the fallback).
-- Both `main` and `demo` are deployed. `main` is deployed ahead of time; `demo` deploys live.
-- Tests: a few Vitest unit tests for name validation + blocklist, run as a parallel non-gating CI job.
-- After the talk: leave `main` open for signing (Turnstile + blocklist); wipe via `/admin` when wanted.
+## Talk plan (NOT STARTED, pending sign-off on `main`)
+- Branches: `main` (finished), `demo` (live build from tag `demo-start`), `rehearsal-N` (dry runs from `demo-start`). Never force push; start a fresh run by branching from the tag under a new name.
+- Candidate checkpoints on `main` history: `demo-start` = `ed7b25c` (scaffold + tokens + fonts + primitives, Hero, QRCard, static Bauble), `act-1` = `a4728ba` (static board, arrival animation, join UI), `act-3` = `eb2d2a4` (API, join, admin, polling, Turnstile, tests), `act-4` = `d64c4a8` (physics). Later commits on `main` are fixes and polish. Tags will be placed once the acts are settled.
+- Acts, in order: board UI local, deploy static, API + join + admin + protections (audience joins), physics and motion. Each act is one prepared prompt plus optional follow-ups, in `prompts/act-N.md`.
+- Goal: after all acts `demo` is functionally the same as `main`; `main` is the fallback.
 - Model for the live session: Sonnet 5.5, same model in every rehearsal.
+- Fallback: phone hotspot.

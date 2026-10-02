@@ -83,7 +83,12 @@ async function me(url: URL, env: Env): Promise<Response> {
   if (!id) return json({ error: "invalid" }, 400);
 
   const entry = await env.DB.prepare(`SELECT ${COLUMNS} FROM entries WHERE id = ?`).bind(id).first<Entry>();
-  return entry ? json(entry) : json({ error: "not_found" }, 404);
+  if (!entry) return json({ error: "not_found" }, 404);
+
+  const newer = await env.DB.prepare("SELECT COUNT(*) AS n FROM entries WHERE created_at > ?")
+    .bind(entry.createdAt)
+    .first<{ n: number }>();
+  return json({ ...entry, onBoard: (newer?.n ?? 0) < MAX_RECRUITS });
 }
 
 async function adminStats(request: Request, env: Env): Promise<Response> {
