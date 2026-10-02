@@ -1,0 +1,36 @@
+export const ANIMALS = [
+  { emoji: "🦊", name: "fox" },
+  { emoji: "🐙", name: "octopus" },
+  { emoji: "🐸", name: "frog" },
+  { emoji: "🦉", name: "owl" },
+  { emoji: "🐢", name: "turtle" },
+  { emoji: "🦝", name: "raccoon" },
+  { emoji: "🐝", name: "bee" },
+  { emoji: "🐧", name: "penguin" },
+  { emoji: "🦄", name: "unicorn" },
+  { emoji: "🐻", name: "bear" },
+  { emoji: "🦈", name: "shark" },
+  { emoji: "🐞", name: "ladybug" },
+  { emoji: "🦒", name: "giraffe" },
+  { emoji: "🐊", name: "crocodile" },
+  { emoji: "🦋", name: "butterfly" },
+  { emoji: "🐳", name: "whale" },
+  { emoji: "🦔", name: "hedgehog" },
+  { emoji: "🐼", name: "panda" },
+  { emoji: "🐨", name: "koala" },
+  { emoji: "🐯", name: "tiger" },
+  { emoji: "🦁", name: "lion" },
+  { emoji: "🐮", name: "cow" },
+  { emoji: "🐷", name: "pig" },
+  { emoji: "🐵", name: "monkey" },
+  { emoji: "🦀", name: "crab" },
+  { emoji: "🦜", name: "parrot" },
+  { emoji: "🦩", name: "flamingo" },
+  { emoji: "🦥", name: "sloth" },
+  { emoji: "🦦", name: "otter" },
+  { emoji: "🐌", name: "snail" },
+] as const;
+
+export function animalName(emoji: string): string {
+  return ANIMALS.find((animal) => animal.emoji === emoji)?.name ?? "animal";
+}

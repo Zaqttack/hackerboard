@@ -18,6 +18,7 @@ type BaubleProps = {
   scale?: number;
   rotation?: number;
   isNew?: boolean;
+  exiting?: boolean;
   style?: CSSProperties;
   ref?: Ref<HTMLDivElement>;
 };
@@ -29,13 +30,14 @@ export function Bauble({
   scale = 1,
   rotation = 0,
   isNew = false,
+  exiting = false,
   style,
   ref,
 }: BaubleProps) {
   return (
     <div
       ref={ref}
-      className={`shadow-bauble border-ink relative flex h-[88px] items-center gap-3.5 rounded-full border-[3px] pr-[30px] pl-[7px] ${FILL_CLASS[fill]} ${isNew ? "anim-arrive" : ""}`}
+      className={`shadow-bauble border-ink relative flex h-[88px] items-center gap-3.5 rounded-full border-[3px] pr-[30px] pl-[7px] ${FILL_CLASS[fill]} ${isNew ? "anim-arrive" : ""} ${exiting ? "anim-fade-out" : ""}`}
       style={{
         transformOrigin: "44px 44px",
         transform: `rotate(${rotation}deg) scale(${scale})`,

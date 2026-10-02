@@ -76,6 +76,27 @@ jobs:
             wrangler.jsonc > wrangler.tmp
           mv wrangler.tmp wrangler.jsonc
 
+      - name: Choose Turnstile keys
+        env:
+          MAIN_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
+          MAIN_SECRET: ${{ secrets.TURNSTILE_SECRET }}
+        run: |
+          if [ "$GITHUB_REF_NAME" = "main" ]; then
+            if [ -n "$MAIN_SITE_KEY" ] && [ -n "$MAIN_SECRET" ]; then
+              SITE="$MAIN_SITE_KEY"
+              SECRET="$MAIN_SECRET"
+            else
+              SITE=""
+              SECRET=""
+            fi
+          else
+            SITE="1x00000000000000000000AA"
+            SECRET="1x0000000000000000000000000000000AA"
+          fi
+          echo "::add-mask::$SECRET"
+          echo "VITE_TURNSTILE_SITE_KEY=$SITE" >> "$GITHUB_ENV"
+          echo "TURNSTILE_SECRET_VALUE=$SECRET" >> "$GITHUB_ENV"
+
       - run: pnpm run build
 
       - name: Apply D1 migrations
@@ -92,7 +113,13 @@ jobs:
       - name: Set Worker secrets
         env:
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
-        run: printf '%s' "$ADMIN_KEY" | pnpm exec wrangler secret put ADMIN_KEY
+        run: |
+          printf '%s' "$ADMIN_KEY" | pnpm exec wrangler secret put ADMIN_KEY
+          if [ -n "$TURNSTILE_SECRET_VALUE" ]; then
+            printf '%s' "$TURNSTILE_SECRET_VALUE" | pnpm exec wrangler secret put TURNSTILE_SECRET
+          else
+            pnpm exec wrangler secret delete TURNSTILE_SECRET || true
+          fi
 
       - name: Smoke test
         env:

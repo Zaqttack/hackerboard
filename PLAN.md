@@ -85,7 +85,7 @@ Fallback: phone hotspot.
 - Blocklist: use an npm package (e.g. `obscenity`) rather than a word list in a public repo; covered by Vitest.
 - Board poll failure: keep the last known state silently, retry next tick. No UI.
 - Not designed, small: Turnstile failed/expired state on `/join`; admin wipe network error; 404 route (SPA fallback to `/`); favicon, `<title>`, OG image (main is shareable); input attrs (`autocomplete=off`, `autocapitalize=words`, `enterkeyhint=done`); MIT LICENSE.
-- Turnstile on `demo`/rehearsal deploys only enforces if the real widget's hostname allowlist accepts the workers.dev hostname; otherwise they run Cloudflare's test keys (always pass). Check the widget settings before the talk.
+- Turnstile: `main` uses the real widget (repo secret `TURNSTILE_SECRET`, repo variable `VITE_TURNSTILE_SITE_KEY`); if either is missing `main` runs with no captcha. Every other branch always uses Cloudflare's always-pass test keys, so no hostname allowlist is needed.
 
 ## Other decisions
 - QR code generated client-side from `window.location` with `qrcode.react` (SVG). The audience scans whichever deploy is on screen (`demo`; `main` is the fallback).

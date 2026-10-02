@@ -1,15 +1,26 @@
 import type { FormEvent } from "react";
+import { NAME_MAX } from "../shared/constants.ts";
 import { BaublePreview } from "./BaublePreview.tsx";
 import { TurnstileSlot } from "./TurnstileSlot.tsx";
 
-export const NAME_MAX = 20;
 
-export type JoinStatus = "idle" | "typing" | "empty" | "submitting" | "rejected" | "network";
+
+export type JoinStatus =
+  | "idle"
+  | "typing"
+  | "empty"
+  | "submitting"
+  | "rejected"
+  | "unverified"
+  | "network";
 
 type JoinFormProps = {
   name: string;
   status: JoinStatus;
   verified: boolean;
+  siteKey?: string;
+  resetKey: number;
+  onToken: (token: string | null) => void;
   onNameChange: (name: string) => void;
   onSubmit: () => void;
 };
@@ -17,9 +28,19 @@ type JoinFormProps = {
 const ERRORS: Partial<Record<JoinStatus, string>> = {
   empty: "We need a name to pin. Anything up to 20 characters.",
   rejected: "That name didn't get past the bouncer. Try a different one.",
+  unverified: "We couldn't verify you're human. Give it another try.",
 };
 
-export function JoinForm({ name, status, verified, onNameChange, onSubmit }: JoinFormProps) {
+export function JoinForm({
+  name,
+  status,
+  verified,
+  siteKey,
+  resetKey,
+  onToken,
+  onNameChange,
+  onSubmit,
+}: JoinFormProps) {
   const busy = status === "submitting";
   const error = ERRORS[status];
   const atLimit = name.length >= NAME_MAX;
@@ -92,7 +113,7 @@ export function JoinForm({ name, status, verified, onNameChange, onSubmit }: Joi
         <div className="text-ink-soft text-[15px] font-medium">Your animal is a surprise.</div>
       </div>
 
-      <TurnstileSlot verified={verified} />
+      <TurnstileSlot siteKey={siteKey} verified={verified} onToken={onToken} resetKey={resetKey} />
 
       <button
         type="submit"

@@ -12,7 +12,7 @@ Vite, React 19, TypeScript (strict), Tailwind v4, react-router-dom. One Cloudfla
 
 ## Commands
 - `pnpm dev` runs Vite; `/api` proxies to `localhost:8787`.
-- `pnpm run cf:dev` builds, applies migrations to the local D1, and runs `wrangler dev` on 8787.
+- `pnpm run cf:dev` builds, applies migrations to the local D1, and runs `wrangler dev` on 8787. Needs `.dev.vars` (copy `.dev.vars.example`) for `/admin`.
 - `pnpm run typecheck`, `pnpm test`.
 - Always pnpm, never npm or yarn.
 

@@ -11,7 +11,7 @@ pnpm install
 pnpm dev
 ```
 
-For the API too:
+For the API too, copy `.dev.vars.example` to `.dev.vars` (it sets the local `/admin` passphrase), then:
 
 ```sh
 pnpm run cf:dev
@@ -26,6 +26,8 @@ pnpm run cf:dev
    - `CLOUDFLARE_ACCOUNT_ID`
    - `ADMIN_KEY`, the passphrase for `/admin`
 4. Push to `main`, or run the workflow manually from the Actions tab.
+
+5. Optional, bot protection: create a Turnstile widget in Cloudflare, then add the secret `TURNSTILE_SECRET` and the repository variable `VITE_TURNSTILE_SITE_KEY`. Without them `main` runs with no captcha. Every other branch uses Cloudflare's always-pass test keys.
 
 The workflow creates the D1 database, applies migrations, deploys the Worker, and sets the secrets. Nothing else to configure.
 

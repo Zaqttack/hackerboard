@@ -44,9 +44,11 @@ export function JoinResult({ kind, name, emoji, animalName }: JoinResultProps) {
         <span className="font-hand pt-[5px] text-[28px] leading-none font-bold">{name}</span>
       </div>
 
-      <p className="text-ink-soft m-0 mt-1.5 text-[15px] font-medium">
-        {success ? "Animals are random. No swaps, no take-backs." : "Joined from this device a moment ago."}
-      </p>
+      {!success && (
+        <p className="text-ink-soft m-0 mt-1.5 text-[15px] font-medium">
+          Joined from this device a moment ago.
+        </p>
+      )}
     </div>
   );
 }
