@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hackerboard motion spec</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&amp;family=Kalam:wght@700&amp;family=Special+Elite&amp;family=Zilla+Slab:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1560px; box-sizing: border-box; padding: 64px; background: #F3F0E7; color: #1A1A1A; font-family: 'Zilla Slab', serif; display: flex; flex-direction: column; gap: 40px">
+  <header style="display: flex; align-items: baseline; gap: 28px">
+    <h1 style="margin: 0; font-family: 'Caveat Brush', cursive; font-weight: 400; font-size: 88px; line-height: 1">Motion spec</h1>
+    <span style="font-family: 'Special Elite', monospace; font-size: 20px; letter-spacing: 2px">ARRIVAL ≈ 2.8s · THEN DRIFT FOREVER</span>
+  </header>
+
+  <section style="display: flex; flex-direction: column; gap: 14px">
+    <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">ARRIVAL STORYBOARD · TIED ARRIVAL (UNTIED SKIPS FRAMES 4–5)</h2>
+    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px">
+      <sc-for list="{{frames}}" as="f" hint-placeholder-count="6">
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <div style="position: relative; height: 230px; overflow: hidden; background-color: #B8864B; background-image: radial-gradient(rgba(70,40,10,.38) 1.2px, rgba(0,0,0,0) 1.7px); background-size: 13px 11px; border: 2px solid #1A1A1A">
+            <sc-if value="{{f.hasTarget}}" hint-placeholder-val="{{false}}">
+              <div style="position: absolute; left: {{f.tx}}px; top: 30px; display: flex; align-items: center; gap: 8px; height: 48px; box-sizing: border-box; padding: 0 14px 0 4px; border-radius: 24px; background: #BCD2E8; border: 2px solid #1A1A1A">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: #FFFFFF; border: 2px solid #1A1A1A; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 20px">🐻</div>
+                <span style="font-family: 'Kalam', cursive; font-weight: 700; font-size: 18px; padding-top: 3px">Theo</span>
+              </div>
+              <div style="position: absolute; left: {{f.sx}}px; top: 30px; width: {{f.slen}}px; height: 4px; background: #B3261E; transform: rotate(52deg); transform-origin: 0 50%"></div>
+            </sc-if>
+            <sc-if value="{{f.rings}}" hint-placeholder-val="{{false}}">
+              <div style="position: absolute; left: 92px; top: 132px; width: 150px; height: 72px; border: 3px dashed #B3261E; border-radius: 36px"></div>
+              <div style="position: absolute; left: 78px; top: 118px; width: 178px; height: 100px; border: 2px solid rgba(179,38,30,.5); border-radius: 50px"></div>
+            </sc-if>
+            <sc-if value="{{f.stamp}}" hint-placeholder-val="{{false}}">
+              <div style="position: absolute; left: 130px; top: 98px; font-family: 'Special Elite', monospace; font-size: 13px; letter-spacing: 1px; color: #B3261E; background: #F3F0E7; border: 2px solid #B3261E; padding: 2px 6px; transform: rotate(-6deg)">NEW RECRUIT</div>
+            </sc-if>
+            <div style="position: absolute; left: 104px; top: {{f.y}}px; transform: scale({{f.sxs}}, {{f.sys}}); transform-origin: 50% 100%; opacity: {{f.op}}; display: flex; align-items: center; gap: 8px; height: 48px; box-sizing: border-box; padding: 0 14px 0 4px; border-radius: 24px; background: #F3F0E7; border: 2px solid #1A1A1A">
+              <div style="position: absolute; left: 16px; top: -7px; width: 12px; height: 12px; border-radius: 50%; background: #B3261E; transform: scale({{f.pin}})"></div>
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: #FFFFFF; border: 2px solid #1A1A1A; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 20px">🐼</div>
+              <span style="font-family: 'Kalam', cursive; font-weight: 700; font-size: 18px; padding-top: 3px; white-space: nowrap">Grace H</span>
+            </div>
+          </div>
+          <div style="font-family: 'Special Elite', monospace; font-size: 16px; color: #B3261E">{{f.time}}</div>
+          <div style="font-family: 'Kalam', cursive; font-weight: 700; font-size: 22px; line-height: 1.1">{{f.title}}</div>
+          <div style="font-size: 15px; line-height: 1.4; color: #4A4540">{{f.body}}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 56px">
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">TIMING + EASING TOKENS</h2>
+      <div style="display: grid; grid-template-columns: 200px 110px 1fr; gap: 8px 18px; font-size: 16px; line-height: 1.35">
+        <b>Drop</b><span>0–260ms</span><span style="font-family: 'Special Elite', monospace; font-size: 14px">translateY −160→0, opacity 0→1 · --hb-ease-fall cubic-bezier(.55,0,1,.45)</span>
+        <b>Squash + recover</b><span>260–480ms</span><span style="font-family: 'Special Elite', monospace; font-size: 14px">scale 1.18/0.82 → 1/1 · --hb-ease-spring cubic-bezier(.34,1.56,.64,1)</span>
+        <b>Pin push</b><span>300–460ms</span><span style="font-family: 'Special Elite', monospace; font-size: 14px">pin scale 1.6 → 1 · same spring</span>
+        <b>Ring burst ×2</b><span>300–950ms</span><span style="font-family: 'Special Elite', monospace; font-size: 14px">scale .7→1.5, opacity 1→0, 2nd ring +120ms · --hb-ease-out cubic-bezier(.16,1,.3,1)</span>
+        <b>String draw</b><span>350–850ms</span><span style="font-family: 'Special Elite', monospace; font-size: 14px">target pin → new pin, length 0→100% · --hb-ease-inout cubic-bezier(.65,0,.35,1)</span>
+        <b>Tug</b><span>850–1100ms</span><span style="font-family: 'Special Elite', monospace; font-size: 14px">target velocity += 40px/s toward new, physics settles it</span>
+        <b>Stamp</b><span>850–2800ms</span><span style="font-family: 'Special Elite', monospace; font-size: 14px">scale 2→1, rotate −6°, 180ms thunk · hold 1.4s · fade 400ms</span>
+        <b>Counter tick</b><span>850–1050ms</span><span style="font-family: 'Special Elite', monospace; font-size: 14px">hero stamp number scale 1.25→1, spring</span>
+        <b>Exit (51st joins)</b><span>900ms</span><span style="font-family: 'Special Elite', monospace; font-size: 14px">oldest: pin pops 120ms, tilt 18°, fall off bottom ease-in; its strings retract 250ms, no re-tie</span>
+        <b>Empty idle</b><span>2.4s loop</span><span style="font-family: 'Special Elite', monospace; font-size: 14px">ghost bauble scale 1→1.03, ease-in-out alternate</span>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">DRIFT, COLLISIONS, STRINGS</h2>
+      <ul style="margin: 0; padding-left: 22px; font-size: 16px; line-height: 1.5; display: flex; flex-direction: column; gap: 4px">
+        <li><b>Drift:</b> speed 10–22 px/s, random heading. Rotation wobble ±3° on a 7–11s sine, phase random per bauble.</li>
+        <li><b>Bodies:</b> treat each bauble as its rounded rect. Restitution 0.85, max speed 28 px/s, re-randomize heading by ±10° on each bounce so it never looks like a screensaver.</li>
+        <li><b>Walls:</b> screen edges inset 24px, plus hero and QR rects padded 24px. Baubles never pass behind them.</li>
+        <li><b>Ding:</b> on collisions faster than 14 px/s, three short ink tick marks at the contact point, scale .6→1.2 and fade, 280ms. Max 4 at once, 1.5s cooldown per pair.</li>
+        <li><b>Tie odds taper:</b> recruits 2–10 tie 80% of the time, 11–25 at 40%, 26–50 at 20%. About 18 strings at a full board, not 49. Untied arrivals still get the full drop, burst and stamp.</li>
+        <li><b>Target:</b> one string to a random recruit among the 5 nearest with fewer than 3 strings. No hubs, no second ties.</li>
+        <li><b>Persistent:</b> links live server-side next to recruits ({id, from, to}). A refresh or a new join never re-rolls them. A link only goes away when one of its ends leaves.</li>
+        <li><b>String physics:</b> pin-to-pin line, redrawn every frame. Slack until 420px, then a weak spring (0.4 px/s² per 100px over). Untied baubles drift free, which keeps the crowd organic instead of settling into a grid.</li>
+        <li><b>Exits:</b> when the oldest leaves, its strings retract and are not replaced.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 56px">
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">PREFERS-REDUCED-MOTION</h2>
+      <ul style="margin: 0; padding-left: 22px; font-size: 16px; line-height: 1.5">
+        <li>No drift, collisions or wobble. Baubles get a seeded scatter position that avoids the hero and QR.</li>
+        <li>Arrival: opacity 0→1 and scale .96→1, 200ms ease-out. No drop, squash or rings.</li>
+        <li>Strings fade in over 200ms instead of drawing. The stamp shows static for 1.5s.</li>
+        <li>Exit: the oldest fades out over 300ms. Ghost bauble on the empty board stays still.</li>
+      </ul>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">COST AT 50 BAUBLES</h2>
+      <ul style="margin: 0; padding-left: 22px; font-size: 16px; line-height: 1.5">
+        <li>One requestAnimationFrame loop. Write only <b>transform</b> per bauble (translate3d + rotate + scale), never left/top.</li>
+        <li>Box-shadows stay static. Never animate shadow, filter or clip-path. Ring bursts use border + transform + opacity only.</li>
+        <li>Strings: one absolutely positioned SVG with up to ~60 &lt;line&gt; elements, attributes updated in the same frame.</li>
+        <li>Collisions are 1,225 pair checks a frame, which is fine. No library needed.</li>
+        <li>Cork texture is a static background on the root. Drop-shadow filters only on the static hero and QR card.</li>
+        <li>Fallback if the presenter laptop chugs: drop the second shadow layer on baubles and turn off rotation wobble.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1560}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var frames = [
+      { time: '0ms', title: 'Drop', body: 'Falls in from 160px above its spawn point, fading up.', y: 20, sxs: 1, sys: 1, op: 0.6, pin: 0, rings: false, stamp: false, hasTarget: false, tx: 0, sx: 0, slen: 0 },
+      { time: '260ms', title: 'Squash', body: 'Hits the cork, squashes wide, springs back.', y: 140, sxs: 1.18, sys: 0.82, op: 1, pin: 0, rings: false, stamp: false, hasTarget: false, tx: 0, sx: 0, slen: 0 },
+      { time: '300ms', title: 'Pin + burst', body: 'Pin punches in. Two dashed red rings blow outward.', y: 140, sxs: 1, sys: 1, op: 1, pin: 1.6, rings: true, stamp: false, hasTarget: false, tx: 0, sx: 0, slen: 0 },
+      { time: '350–850ms', title: 'String draws', body: 'Red string runs from a random nearby recruit to the new pin.', y: 140, sxs: 1, sys: 1, op: 1, pin: 1, rings: false, stamp: false, hasTarget: true, tx: 14, sx: 34, slen: 70 },
+      { time: '850ms', title: 'Tug + stamp', body: 'String goes taut, the old recruit gets tugged. NEW RECRUIT stamp thunks down.', y: 140, sxs: 1, sys: 1, op: 1, pin: 1, rings: false, stamp: true, hasTarget: true, tx: 28, sx: 48, slen: 134 },
+      { time: '2800ms', title: 'Settle', body: 'Stamp fades. Both drift on, tied together.', y: 150, sxs: 1, sys: 1, op: 1, pin: 1, rings: false, stamp: false, hasTarget: true, tx: 22, sx: 42, slen: 140 }
+    ];
+    return { frames: frames };
+  }
+}
+</script>
+</body>
+</html>

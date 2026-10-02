@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hackerboard join</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&amp;family=Kalam:wght@700&amp;family=Special+Elite&amp;family=Zilla+Slab:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; padding: 28px 16px 24px 16px; display: flex; flex-direction: column; gap: 18px; font-family: 'Zilla Slab', serif; color: #1A1A1A; background-color: #B8864B; background-image: radial-gradient(ellipse at center, rgba(0,0,0,0) 50%, rgba(80,45,10,.35) 100%), radial-gradient(rgba(70,40,10,.38) 1.2px, rgba(0,0,0,0) 1.7px), radial-gradient(rgba(255,230,190,.28) 1px, rgba(0,0,0,0) 1.5px), radial-gradient(rgba(90,55,20,.28) 2px, rgba(0,0,0,0) 2.7px); background-size: 100% 100%, 13px 11px, 17px 19px, 41px 37px; background-position: 0 0, 0 0, 6px 9px, 20px 4px">
+
+  <header style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 0 8px">
+    <div style="font-family: 'Special Elite', monospace; font-size: 17px; padding: 6px 18px; transform: rotate(-3deg); background: rgba(232,200,90,.94); clip-path: polygon(2% 0,98% 4%,100% 30%,97% 55%,100% 80%,97% 100%,3% 96%,0 70%,3% 45%,0 18%)">RowdyHacks XII</div>
+    <div style="font-family: 'Caveat Brush', cursive; font-size: 60px; line-height: 1">Hackerboard</div>
+  </header>
+
+  <sc-if value="{{isForm}}" hint-placeholder-val="{{true}}">
+    <main style="position: relative; background: #F3F0E7; padding: 26px 20px 24px 20px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 12px 20px rgba(40,20,0,.4)">
+      <div style="position: absolute; left: 50%; top: -11px; margin-left: -12px; width: 24px; height: 24px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #E25A50, #B3261E 55%, #6E1510); box-shadow: 0 3px 4px rgba(0,0,0,.45)"></div>
+
+      <sc-if value="{{showBanner}}" hint-placeholder-val="{{false}}">
+        <div role="alert" style="background: #E8C85A; border: 2px solid #1A1A1A; border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px">
+          <div style="font-family: 'Special Elite', monospace; font-size: 16px; letter-spacing: 2px">NO SIGNAL</div>
+          <div style="font-size: 17px; font-weight: 500; line-height: 1.3">Couldn't reach the board. Your name is still here, so just try again.</div>
+        </div>
+      </sc-if>
+
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <h1 style="margin: 0; font-family: 'Kalam', cursive; font-weight: 700; font-size: 30px; line-height: 1.1">Join the crew</h1>
+        <p style="margin: 0; font-size: 18px; font-weight: 500; line-height: 1.35; color: #4A4540">Your name goes up on the big screen.</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline">
+          <label for="hb-name" style="font-size: 18px; font-weight: 700">Name on the board</label>
+          <span style="font-family: 'Special Elite', monospace; font-size: 16px; color: {{counterColor}}">{{counter}}</span>
+        </div>
+        <input id="hb-name" type="text" value="{{value}}" onChange="{{noop}}" placeholder="e.g. Grace H" maxLength="20" disabled="{{busy}}" style="height: 60px; box-sizing: border-box; padding: 6px 16px 0 16px; border-radius: 10px; border: {{inputBorder}}; outline: {{inputOutline}}; outline-offset: 2px; background: #FFFFFF; font-family: 'Kalam', cursive; font-weight: 700; font-size: 26px; color: #1A1A1A">
+        <sc-if value="{{showError}}" hint-placeholder-val="{{false}}">
+          <div role="alert" style="display: flex; gap: 8px; align-items: flex-start; color: #B3261E; font-size: 17px; font-weight: 700; line-height: 1.3">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#B3261E" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 1px"><circle cx="10" cy="10" r="8"></circle><path d="M10 5.5v5.5M10 14.2v.3"></path></svg>
+            <span>{{errorText}}</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{showLimit}}" hint-placeholder-val="{{false}}">
+          <div style="font-size: 16px; font-weight: 500; color: #4A4540">20 characters max. That's the whole bauble.</div>
+        </sc-if>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="font-family: 'Special Elite', monospace; font-size: 14px; letter-spacing: 2px; color: #4A4540">PREVIEW</div>
+        <div style="align-self: flex-start; position: relative; display: flex; align-items: center; gap: 10px; height: 66px; box-sizing: border-box; padding: 0 22px 0 6px; border-radius: 33px; background: #F3F0E7; border: 3px solid #1A1A1A; box-shadow: 0 4px 0 rgba(26,26,26,.2); opacity: {{previewOpacity}}">
+          <div style="position: absolute; left: 22px; top: -9px; width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #E25A50, #B3261E 55%, #6E1510)"></div>
+          <div style="width: 50px; height: 50px; border-radius: 50%; background: #FFFFFF; border: 3px dashed #1A1A1A; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Caveat Brush', cursive; font-size: 30px">?</div>
+          <span style="font-family: 'Kalam', cursive; font-weight: 700; font-size: 24px; line-height: 1; padding-top: 4px; white-space: nowrap">{{previewName}}</span>
+        </div>
+        <div style="font-size: 15px; font-weight: 500; color: #4A4540">Your animal is a surprise.</div>
+      </div>
+
+      <div style="width: 300px; height: 65px; box-sizing: border-box; border: 1px solid #BDB7AA; border-radius: 4px; background: #FAFAF7; display: flex; align-items: center; gap: 12px; padding: 0 14px">
+        <sc-if value="{{verified}}" hint-placeholder-val="{{false}}">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#2F6B3A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13" cy="13" r="11"></circle><path d="M8 13.5l3.5 3.5L18.5 9.5"></path></svg>
+          <span style="font-size: 16px; font-weight: 700; color: #2F6B3A">Verified</span>
+        </sc-if>
+        <sc-if value="{{verifying}}" hint-placeholder-val="{{true}}">
+          <div style="width: 22px; height: 22px; border-radius: 50%; border: 3px solid #D8D3C7; border-top-color: #4A4540; box-sizing: border-box"></div>
+          <span style="font-size: 16px; font-weight: 500; color: #4A4540">Verifying you're human…</span>
+        </sc-if>
+        <span style="margin-left: auto; font-family: 'Special Elite', monospace; font-size: 11px; color: #6B655C">TURNSTILE 300×65</span>
+      </div>
+
+      <button type="button" disabled="{{btnDisabled}}" style="height: 62px; border-radius: 12px; border: 3px solid #1A1A1A; background: {{btnBg}}; color: {{btnColor}}; box-shadow: {{btnShadow}}; font-family: 'Kalam', cursive; font-weight: 700; font-size: 26px; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 6px 0 0 0">
+        <sc-if value="{{busy}}" hint-placeholder-val="{{false}}">
+          <span style="width: 22px; height: 22px; border-radius: 50%; border: 3px solid rgba(243,240,231,.35); border-top-color: #F3F0E7; box-sizing: border-box; margin-top: -6px"></span>
+        </sc-if>
+        <span>{{btnLabel}}</span>
+      </button>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{isDone}}" hint-placeholder-val="{{false}}">
+    <main style="position: relative; background: #F3F0E7; padding: 40px 20px 28px 20px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; box-shadow: 0 12px 20px rgba(40,20,0,.4)">
+      <div style="position: absolute; left: 50%; top: -11px; margin-left: -12px; width: 24px; height: 24px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #E25A50, #B3261E 55%, #6E1510); box-shadow: 0 3px 4px rgba(0,0,0,.45)"></div>
+      <div style="position: absolute; right: 14px; top: 18px; font-family: 'Special Elite', monospace; font-size: 18px; letter-spacing: 2px; color: #B3261E; border: 3px solid #B3261E; border-radius: 4px; padding: 3px 10px; transform: rotate(8deg)">{{stamp}}</div>
+      <div style="position: relative; width: 150px; height: 150px; margin-top: 18px">
+        <sc-if value="{{isSuccess}}" hint-placeholder-val="{{true}}">
+          <div style="position: absolute; left: -16px; top: -16px; right: -16px; bottom: -16px; border: 4px dashed #B3261E; border-radius: 50%"></div>
+          <div style="position: absolute; left: -34px; top: -34px; right: -34px; bottom: -34px; border: 3px solid rgba(179,38,30,.4); border-radius: 50%"></div>
+        </sc-if>
+        <div style="position: absolute; inset: 0; border-radius: 50%; background: #FFFFFF; border: 4px solid #1A1A1A; display: flex; align-items: center; justify-content: center; font-size: 92px; line-height: 1; box-shadow: 0 6px 0 rgba(26,26,26,.2)">🐼</div>
+      </div>
+      <h1 style="margin: 14px 0 0 0; font-family: 'Caveat Brush', cursive; font-weight: 400; font-size: 50px; line-height: 1">{{doneTitle}}</h1>
+      <p style="margin: 0; font-size: 19px; font-weight: 500; line-height: 1.35; color: #4A4540">{{doneBody}}</p>
+      <div style="position: relative; display: flex; align-items: center; gap: 12px; height: 76px; box-sizing: border-box; padding: 0 26px 0 6px; border-radius: 38px; background: #E8C85A; border: 3px solid #1A1A1A; box-shadow: 0 5px 0 rgba(26,26,26,.2); transform: rotate(-2deg); margin-top: 6px">
+        <div style="position: absolute; left: 26px; top: -10px; width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #E25A50, #B3261E 55%, #6E1510)"></div>
+        <div style="width: 60px; height: 60px; border-radius: 50%; background: #FFFFFF; border: 3px solid #1A1A1A; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 36px">🐼</div>
+        <span style="font-family: 'Kalam', cursive; font-weight: 700; font-size: 28px; line-height: 1; padding-top: 5px">Grace H</span>
+      </div>
+      <p style="margin: 6px 0 0 0; font-size: 15px; font-weight: 500; color: #4A4540">{{doneFoot}}</p>
+    </main>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"screen":{"editor":"enum","options":["idle","typing","empty","long","submitting","success","already","rejected","network"],"default":"idle"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var s = this.props.screen ?? 'idle';
+    var values = { idle: '', typing: 'Grace H', empty: '', long: 'Bartholomew Castillo', submitting: 'Grace H', rejected: 'B0ss Hacker 69', network: 'Grace H' };
+    var value = (values[s] ?? '').slice(0, 20);
+    var atLimit = value.length >= 20;
+    var tooLong = false;
+    var errors = {
+      empty: 'We need a name to pin. Anything up to 20 characters.',
+      rejected: "That name didn't get past the bouncer. Try a different one."
+    };
+    var isError = !!errors[s];
+    var busy = s === 'submitting';
+    var hasName = value.length > 0 && !tooLong;
+    var enabled = hasName && s !== 'rejected';
+    var btnLabel = busy ? 'Pinning you up…' : (s === 'network' ? 'Try again' : 'Pin me to the board');
+    var isSuccess = s === 'success';
+    var isAlready = s === 'already';
+    return {
+      isForm: !isSuccess && !isAlready,
+      isDone: isSuccess || isAlready,
+      isSuccess: isSuccess,
+      showBanner: s === 'network',
+      value: value,
+      noop: function () {},
+      busy: busy,
+      counter: value.length + ' / 20',
+      counterColor: atLimit ? '#B3261E' : '#4A4540',
+      showLimit: atLimit && !isError,
+      inputBorder: isError ? '3px solid #B3261E' : '2px solid #1A1A1A',
+      inputOutline: s === 'typing' ? '4px solid #E8C85A' : 'none',
+      showError: isError,
+      errorText: errors[s] ?? '',
+      previewName: value.length ? value.slice(0, 20) : 'your name',
+      previewOpacity: value.length ? 1 : 0.6,
+      verified: s !== 'idle',
+      verifying: s === 'idle',
+      btnDisabled: !enabled && !busy,
+      btnBg: (enabled || busy) ? '#B3261E' : '#E2DCCD',
+      btnColor: (enabled || busy) ? '#F3F0E7' : '#4A4540',
+      btnShadow: (enabled && !busy) ? '0 5px 0 #1A1A1A' : 'none',
+      btnLabel: btnLabel,
+      stamp: isSuccess ? 'RECRUITED' : 'ON FILE',
+      doneTitle: isSuccess ? "You're on the board!" : 'Already on the board',
+      doneBody: isSuccess ? "Look up. You're the panda with the red pin." :'One recruit per phone. Find yourself up on the big screen.',
+      doneFoot: isSuccess ? 'Animals are random. No swaps, no take-backs.' : 'Joined from this device a moment ago.'
+    };
+  }
+}
+</script>
+</body>
+</html>

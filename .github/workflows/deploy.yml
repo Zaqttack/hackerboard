@@ -1,0 +1,113 @@
+name: Test & Deploy
+
+on:
+  push:
+    branches: [main, "demo*", "rehearsal*"]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Typecheck & unit tests
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'main' || startsWith(github.ref_name, 'demo') || startsWith(github.ref_name, 'rehearsal')
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - run: corepack enable pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run typecheck
+      - run: pnpm run test
+
+  deploy:
+    name: Deploy to Cloudflare Workers
+    needs: [test]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - run: corepack enable pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Name the deployment after the branch
+        id: names
+        run: |
+          if [ "$GITHUB_REF_NAME" = "main" ]; then
+            NAME="hackerboard"
+          else
+            SLUG=$(printf '%s' "$GITHUB_REF_NAME" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//' | cut -c1-40 | sed -E 's/-+$//')
+            NAME="hackerboard-$SLUG"
+          fi
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Find or create the D1 database
+        id: db
+        env:
+          NAME: ${{ steps.names.outputs.name }}
+        run: |
+          find_id() {
+            pnpm exec wrangler d1 list --json | jq -r --arg n "$NAME" '.[] | select(.name == $n) | (.uuid // .database_id // .id)'
+          }
+          ID=$(find_id)
+          if [ -z "$ID" ]; then
+            pnpm exec wrangler d1 create "$NAME"
+            ID=$(find_id)
+          fi
+          test -n "$ID"
+          echo "id=$ID" >> "$GITHUB_OUTPUT"
+
+      - name: Point wrangler.jsonc at this branch's Worker and database
+        env:
+          NAME: ${{ steps.names.outputs.name }}
+          DB_ID: ${{ steps.db.outputs.id }}
+        run: |
+          jq --arg name "$NAME" --arg id "$DB_ID" \
+            '.name = $name | .d1_databases[0].database_name = $name | .d1_databases[0].database_id = $id' \
+            wrangler.jsonc > wrangler.tmp
+          mv wrangler.tmp wrangler.jsonc
+
+      - run: pnpm run build
+
+      - name: Apply D1 migrations
+        run: pnpm exec wrangler d1 migrations apply DB --remote
+
+      - name: Deploy Worker
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+
+      - name: Set Worker secrets
+        env:
+          ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
+        run: printf '%s' "$ADMIN_KEY" | pnpm exec wrangler secret put ADMIN_KEY
+
+      - name: Smoke test
+        env:
+          URL: ${{ steps.deploy.outputs.deployment-url }}
+        run: |
+          echo "Deployed: $URL" >> "$GITHUB_STEP_SUMMARY"
+          for i in 1 2 3 4 5 6; do
+            curl -fsS "$URL/api/health" && exit 0
+            sleep 5
+          done
+          exit 1

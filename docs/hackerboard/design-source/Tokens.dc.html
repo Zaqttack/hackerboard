@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hackerboard tokens</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&amp;family=Kalam:wght@700&amp;family=Special+Elite&amp;family=Zilla+Slab:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1560px; box-sizing: border-box; padding: 64px; background: #F3F0E7; color: #1A1A1A; font-family: 'Zilla Slab', serif; display: flex; flex-direction: column; gap: 48px">
+  <header style="display: flex; align-items: baseline; gap: 28px">
+    <h1 style="margin: 0; font-family: 'Caveat Brush', cursive; font-weight: 400; font-size: 88px; line-height: 1">Token sheet</h1>
+    <span style="font-family: 'Special Elite', monospace; font-size: 20px; letter-spacing: 2px">CSS VAR --hb-* · TAILWIND theme.extend · CONTRAST WCAG 2.1</span>
+  </header>
+
+  <section style="display: flex; flex-direction: column; gap: 16px">
+    <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">COLOR</h2>
+    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 80px; background: #B8864B; border: 2px solid #1A1A1A"></div><b style="font-size: 18px">cork</b><span style="font-size: 15px">#B8864B · board ground</span><span style="font-family: 'Special Elite', monospace; font-size: 13px">--hb-cork · bg-cork · ink 5.4</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 80px; background: #9A6B36; border: 2px solid #1A1A1A"></div><b style="font-size: 18px">cork-edge</b><span style="font-size: 15px">#9A6B36 · vignette, texture</span><span style="font-family: 'Special Elite', monospace; font-size: 13px">--hb-cork-edge · cork-edge</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 80px; background: #F3F0E7; border: 2px solid #1A1A1A"></div><b style="font-size: 18px">paper</b><span style="font-size: 15px">#F3F0E7 · cards, surfaces</span><span style="font-family: 'Special Elite', monospace; font-size: 13px">--hb-paper · ink 15.3</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 80px; background: #E2DCCD; border: 2px solid #1A1A1A"></div><b style="font-size: 18px">paper-shade</b><span style="font-size: 15px">#E2DCCD · disabled fill</span><span style="font-family: 'Special Elite', monospace; font-size: 13px">--hb-paper-shade · ink-soft 6.9</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 80px; background: #1A1A1A; border: 2px solid #1A1A1A"></div><b style="font-size: 18px">ink</b><span style="font-size: 15px">#1A1A1A · text, outlines</span><span style="font-family: 'Special Elite', monospace; font-size: 13px">--hb-ink · on paper 15.3</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 80px; background: #4A4540; border: 2px solid #1A1A1A"></div><b style="font-size: 18px">ink-soft</b><span style="font-size: 15px">#4A4540 · secondary text</span><span style="font-family: 'Special Elite', monospace; font-size: 13px">--hb-ink-soft · on paper 8.3</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 80px; background: #B3261E; border: 2px solid #1A1A1A"></div><b style="font-size: 18px">string</b><span style="font-size: 15px">#B3261E · strings, stamps, CTA, danger</span><span style="font-family: 'Special Elite', monospace; font-size: 13px">--hb-string · paper on it 5.7</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 80px; background: #8F1D17; border: 2px solid #1A1A1A"></div><b style="font-size: 18px">string-dark</b><span style="font-size: 15px">#8F1D17 · danger heading</span><span style="font-family: 'Special Elite', monospace; font-size: 13px">--hb-string-dark · 7.8</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 80px; background: #FBEDEA; border: 2px solid #1A1A1A"></div><b style="font-size: 18px">danger-tint</b><span style="font-size: 15px">#FBEDEA · confirm panel</span><span style="font-family: 'Special Elite', monospace; font-size: 13px">--hb-danger-tint</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 80px; background: #E8C85A; border: 2px solid #1A1A1A"></div><b style="font-size: 18px">tape</b><span style="font-size: 15px">#E8C85A · labels, focus ring, banner</span><span style="font-family: 'Special Elite', monospace; font-size: 13px">--hb-tape · ink 10.6</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 80px; background: #2F6B3A; border: 2px solid #1A1A1A"></div><b style="font-size: 18px">success</b><span style="font-size: 15px">#2F6B3A · verified</span><span style="font-family: 'Special Elite', monospace; font-size: 13px">--hb-success · on paper 5.6</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 80px; background: radial-gradient(circle at 35% 30%, #E25A50, #B3261E 55%, #6E1510); border: 2px solid #1A1A1A"></div><b style="font-size: 18px">pin</b><span style="font-size: 15px">#E25A50 → #B3261E → #6E1510</span><span style="font-family: 'Special Elite', monospace; font-size: 13px">--hb-pin-hi / -mid / -lo</span></div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; margin-top: 8px">
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 32px; background: #F3F0E7; border: 3px solid #1A1A1A"></div><b style="font-size: 18px">bauble-paper</b><span style="font-family: 'Special Elite', monospace; font-size: 13px">#F3F0E7 · ink 15.3</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 32px; background: #E8C85A; border: 3px solid #1A1A1A"></div><b style="font-size: 18px">bauble-tape</b><span style="font-family: 'Special Elite', monospace; font-size: 13px">#E8C85A · ink 10.6</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 32px; background: #DCC395; border: 3px solid #1A1A1A"></div><b style="font-size: 18px">bauble-manila</b><span style="font-family: 'Special Elite', monospace; font-size: 13px">#DCC395 · ink 10.2</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 32px; background: #BCD2E8; border: 3px solid #1A1A1A"></div><b style="font-size: 18px">bauble-carbon</b><span style="font-family: 'Special Elite', monospace; font-size: 13px">#BCD2E8 · ink 11.2</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 32px; background: #F1B9B1; border: 3px solid #1A1A1A"></div><b style="font-size: 18px">bauble-memo</b><span style="font-family: 'Special Elite', monospace; font-size: 13px">#F1B9B1 · ink 10.2</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 64px; border-radius: 32px; background: #C4E0C0; border: 3px solid #1A1A1A"></div><b style="font-size: 18px">bauble-mint</b><span style="font-family: 'Special Elite', monospace; font-size: 13px">#C4E0C0 · ink 12.2</span></div>
+    </div>
+  </section>
+
+  <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 64px">
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">TYPE · GOOGLE FONTS</h2>
+      <div style="display: grid; grid-template-columns: 300px 1fr; gap: 10px 24px; font-size: 17px; align-items: baseline">
+        <span style="font-family: 'Caveat Brush', cursive; font-size: 44px; line-height: 1">Caveat Brush</span><span>Display only. Board 128 · admin 72 · phone 60/50</span>
+        <span style="font-family: 'Kalam', cursive; font-weight: 700; font-size: 32px; line-height: 1.1">Kalam 700</span><span>Names, prompts, buttons, inputs. Board name 34 (31–37 after scale), prompt 38 · phone input/button 26, h1 30</span>
+        <span style="font-family: 'Special Elite', monospace; font-size: 26px">Special Elite</span><span>Stamps, tape labels, URL, counters. Board 20–28 · phone 14–18</span>
+        <span style="font-size: 26px; font-weight: 700">Zilla Slab 500/700</span><span>Body, labels, errors. Phone 15–19 · admin 17–20. Never on the board.</span>
+      </div>
+      <p style="margin: 0; font-size: 16px; color: #4A4540; line-height: 1.4">Floor sizes: board 20px, phone 14px (caps stamps only), body 15px. Handwriting never runs longer than one line.</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">SPACE · RADIUS · STROKE · SHADOW</h2>
+      <div style="display: flex; align-items: flex-end; gap: 14px">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 4px; height: 4px; background: #B3261E"></div><span style="font-size: 14px">1·4</span></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 8px; height: 8px; background: #B3261E"></div><span style="font-size: 14px">2·8</span></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 12px; height: 12px; background: #B3261E"></div><span style="font-size: 14px">3·12</span></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 16px; height: 16px; background: #B3261E"></div><span style="font-size: 14px">4·16</span></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 24px; height: 24px; background: #B3261E"></div><span style="font-size: 14px">5·24</span></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 32px; height: 32px; background: #B3261E"></div><span style="font-size: 14px">6·32</span></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 48px; height: 48px; background: #B3261E"></div><span style="font-size: 14px">7·48</span></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="width: 64px; height: 64px; background: #B3261E"></div><span style="font-size: 14px">8·64</span></div>
+        <span style="font-family: 'Special Elite', monospace; font-size: 14px; margin-left: 10px">--hb-space-1…8 · board gutter 64</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 260px 1fr; gap: 8px 20px; font-size: 16px">
+        <b>radius</b><span>pill 9999 (bauble) · sm 4 (stamp, Turnstile) · md 8 (banner, stat) · lg 10 (input) · xl 12 (button) · paper cards 0</span>
+        <b>stroke</b><span>bauble 3 ink · input 2 ink · error 3 string · stamp 3–4 string · string line 5 · focus 4 tape, offset 2</span>
+        <b>shadow-paper</b><span style="font-family: 'Special Elite', monospace; font-size: 14px">0 12px 18px rgba(40,20,0,.40)</span>
+        <b>shadow-bauble</b><span style="font-family: 'Special Elite', monospace; font-size: 14px">0 6px 0 rgba(26,26,26,.20), 0 14px 22px rgba(40,20,0,.38)</span>
+        <b>shadow-press</b><span style="font-family: 'Special Elite', monospace; font-size: 14px">0 5px 0 #1A1A1A (pressed: 0 1px 0, translateY 4px)</span>
+        <b>shadow-string</b><span style="font-family: 'Special Elite', monospace; font-size: 14px">0 3px 3px rgba(0,0,0,.28)</span>
+      </div>
+    </div>
+  </section>
+
+  <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 64px">
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">BAUBLE ANATOMY</h2>
+      <div style="display: flex; gap: 40px; align-items: center">
+        <div style="position: relative; display: flex; align-items: center; gap: 14px; height: 88px; box-sizing: border-box; padding: 0 30px 0 7px; border-radius: 44px; background: #E8C85A; border: 3px solid #1A1A1A; box-shadow: 0 6px 0 rgba(26,26,26,.2), 0 14px 22px rgba(40,20,0,.38)">
+          <div style="position: absolute; left: 30px; top: -12px; width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #E25A50, #B3261E 55%, #6E1510)"></div>
+          <div style="width: 68px; height: 68px; border-radius: 50%; background: #FFFFFF; border: 3px solid #1A1A1A; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 42px">🦉</div>
+          <span style="font-family: 'Kalam', cursive; font-weight: 700; font-size: 34px; line-height: 1; padding-top: 6px">Priya R</span>
+        </div>
+        <ul style="margin: 0; padding-left: 20px; font-size: 16px; line-height: 1.55">
+          <li>Height 88 · padding 0 30 0 7 · gap 14</li>
+          <li>Coin 68, white, 3px ink, emoji 42</li>
+          <li>Pin 22 at left 30, top −12 (string anchor)</li>
+          <li>Width 220 (4 chars) to ~470 (20 chars)</li>
+          <li>Random scale 0.92–1.10, rotation ±4°</li>
+          <li>Fill: one of 6, random, no repeat twice in a row</li>
+        </ul>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">EMOJI POOL · 30 ANIMALS</h2>
+      <div style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 10px; font-size: 40px; text-align: center">
+        <span>🦊</span><span>🐙</span><span>🐸</span><span>🦉</span><span>🐢</span><span>🦝</span><span>🐝</span><span>🐧</span><span>🦄</span><span>🐻</span>
+        <span>🦈</span><span>🐞</span><span>🦒</span><span>🐊</span><span>🦋</span><span>🐳</span><span>🦔</span><span>🐼</span><span>🐨</span><span>🐯</span>
+        <span>🦁</span><span>🐮</span><span>🐷</span><span>🐵</span><span>🦀</span><span>🦜</span><span>🦩</span><span>🦥</span><span>🦦</span><span>🐌</span>
+      </div>
+      <p style="margin: 0; font-size: 16px; color: #4A4540; line-height: 1.4">All Unicode 12 or older, single code point, no variation selectors, so they render on Windows 10, macOS, Android and iOS. The white coin gives every vendor style the same backdrop. Assign server-side so the phone and the board agree.</p>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1560}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

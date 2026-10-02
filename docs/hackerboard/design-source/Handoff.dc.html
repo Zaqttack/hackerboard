@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hackerboard developer handoff</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&amp;family=Kalam:wght@700&amp;family=Special+Elite&amp;family=Zilla+Slab:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1920px; height: 2100px; box-sizing: border-box; padding: 64px; background: #F3F0E7; color: #1A1A1A; font-family: 'Zilla Slab', serif; display: flex; flex-direction: column; gap: 40px">
+  <header style="display: flex; align-items: baseline; gap: 28px">
+    <h1 style="margin: 0; font-family: 'Caveat Brush', cursive; font-weight: 400; font-size: 88px; line-height: 1">Developer handoff</h1>
+    <span style="font-family: 'Special Elite', monospace; font-size: 20px; letter-spacing: 2px">REACT + VITE + TAILWIND · NO RASTER ASSETS</span>
+  </header>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 48px">
+    <section style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">BOARD LAYERS · /</h2>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="border: 2px solid #1A1A1A; padding: 10px 14px; background: #E8C85A; font-size: 16px"><b>z 40</b> Stamps, ding ticks (transient)</div>
+        <div style="border: 2px solid #1A1A1A; padding: 10px 14px; background: #F3F0E7; font-size: 16px"><b>z 30</b> Hero + QRCard (fixed, physics walls)</div>
+        <div style="border: 2px solid #1A1A1A; padding: 10px 14px; background: #BCD2E8; font-size: 16px"><b>z 20</b> Baubles (absolute, transform only)</div>
+        <div style="border: 2px solid #1A1A1A; padding: 10px 14px; background: #F1B9B1; font-size: 16px"><b>z 10</b> StringLayer (one SVG, full screen)</div>
+        <div style="border: 2px solid #1A1A1A; padding: 10px 14px; background: #B8864B; font-size: 16px"><b>z 0</b> Cork (CSS gradients on root)</div>
+      </div>
+      <p style="margin: 0; font-size: 16px; line-height: 1.45; color: #4A4540">Root is a fixed 1920×1080 stage, scaled to fit and centered (see Viewport below). Hero at left 64 / top 64, 660 wide. QRCard at right 64 / top 52, 340 wide, 260 white tile, 220 code.</p>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">COMPONENTS</h2>
+      <div style="display: grid; grid-template-columns: 170px 1fr; gap: 8px 16px; font-size: 16px; line-height: 1.4">
+        <b>Board</b><span>Root, owns the recruit list + links, subscribes to joins</span>
+        <b>Hero</b><span>count, total</span>
+        <b>QRCard</b><span>url (renders QR + text fallback)</span>
+        <b>Bauble</b><span>name, emoji, fill, scale, isNew · forwardRef for physics</span>
+        <b>StringLayer</b><span>links [{from, to, drawnAt}]</span>
+        <b>EmptyGhost</b><span>shown when count is 0</span>
+        <b>usePhysics</b><span>refs, links, walls → rAF loop</span>
+        <b>JoinForm</b><span>status: idle | typing | invalid | submitting | rejected | network</span>
+        <b>BaublePreview</b><span>name, emoji (? until assigned)</span>
+        <b>TurnstileSlot</b><span>300×65, onVerify(token)</span>
+        <b>JoinResult</b><span>kind: success | already, name, emoji</span>
+        <b>AdminPanel</b><span>status: locked | wrong | ready | confirm | wiped</span>
+        <b>Stamp</b><span>text, tone, rotate (shared by board + phone)</span>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">BUILD ORDER · ~20 MIN</h2>
+      <ol style="margin: 0; padding-left: 26px; font-size: 17px; line-height: 1.5; display: flex; flex-direction: column; gap: 6px">
+        <li><b>Tokens + fonts.</b> Paste the Tailwind block, add the Google Fonts link.</li>
+        <li><b>Static board.</b> Cork, Hero, QRCard, 10 hardcoded Baubles at the positions on the "10 recruits" artboard.</li>
+        <li><b>Join form.</b> Input, counter, button, success. Wire to the board.</li>
+        <li><b>Arrival.</b> CSS keyframes for drop, squash, rings and stamp. Pure CSS, no physics yet.</li>
+        <li><b>Strings.</b> StringLayer with straight lines + stroke-dashoffset draw.</li>
+        <li><b>Drift.</b> usePhysics: velocity, wall bounce, then pair collisions.</li>
+        <li><b>Polish if time.</b> Admin, error states, reduced motion, dings.</li>
+      </ol>
+      <p style="margin: 0; font-size: 15px; line-height: 1.45; color: #4A4540">Step 4 already looks alive on stage. If time runs out after it, the board still works.</p>
+    </section>
+  </div>
+
+  <section style="display: flex; flex-direction: column; gap: 12px">
+    <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">TAILWIND · theme.extend</h2>
+    <pre style="margin: 0; padding: 24px 28px; background: #1A1A1A; color: #F3F0E7; font-family: 'Special Elite', monospace; font-size: 17px; line-height: 1.5; white-space: pre; overflow: hidden">colors: {
+  cork: { DEFAULT: '#B8864B', edge: '#9A6B36' },   paper: { DEFAULT: '#F3F0E7', shade: '#E2DCCD' },
+  ink:  { DEFAULT: '#1A1A1A', soft: '#4A4540' },   string: { DEFAULT: '#B3261E', dark: '#8F1D17', tint: '#FBEDEA' },
+  tape: '#E8C85A',  success: '#2F6B3A',  pin: { hi: '#E25A50', mid: '#B3261E', lo: '#6E1510' },
+  bauble: { paper: '#F3F0E7', tape: '#E8C85A', manila: '#DCC395', carbon: '#BCD2E8', memo: '#F1B9B1', mint: '#C4E0C0' },
+},
+fontFamily: { display: ['"Caveat Brush"', 'cursive'], hand: ['Kalam', 'cursive'], stamp: ['"Special Elite"', 'monospace'], body: ['"Zilla Slab"', 'serif'] },
+borderRadius: { sm: '4px', md: '8px', lg: '10px', xl: '12px' },
+boxShadow: { paper: '0 12px 18px rgba(40,20,0,.40)', bauble: '0 6px 0 rgba(26,26,26,.2), 0 14px 22px rgba(40,20,0,.38)', press: '0 5px 0 #1A1A1A' },
+transitionTimingFunction: { fall: 'cubic-bezier(.55,0,1,.45)', spring: 'cubic-bezier(.34,1.56,.64,1)', out: 'cubic-bezier(.16,1,.3,1)', inout: 'cubic-bezier(.65,0,.35,1)' },</pre>
+  </section>
+
+  <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px">
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">RULES THAT KEEP IT HONEST</h2>
+      <ul style="margin: 0; padding-left: 22px; font-size: 16px; line-height: 1.5">
+        <li>The server assigns emoji and fill so the phone reveal matches the board.</li>
+        <li>Names: trim, collapse spaces, 1–20 characters. Hard cap: maxLength="20" on the input (pastes get cut at 20) and the same check on the server. Counter turns red at 20 / 20.</li>
+        <li>One join per device (cookie or localStorage token). "Already on the board" uses the stored name + emoji.</li>
+        <li>Name filter runs server-side. Rejected copy stays friendly and never repeats the name back.</li>
+      </ul>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">ACCESSIBILITY</h2>
+      <ul style="margin: 0; padding-left: 22px; font-size: 16px; line-height: 1.5">
+        <li>Every text pair on this sheet is AA or better. Board name text is 10.2:1 minimum.</li>
+        <li>Touch targets: input 60px, button 62px, admin buttons 56–64px.</li>
+        <li>Errors use role="alert" plus a red 3px border and an icon, never color alone.</li>
+        <li>Focus ring: 4px tape yellow, 2px offset, on every interactive element.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px">
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">DENSITY TIERS · BAUBLES SHRINK AS THE ROOM FILLS</h2>
+      <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 2px solid #1A1A1A; font-size: 16px">
+        <b style="padding: 10px 12px; background: #1A1A1A; color: #F3F0E7">Recruits</b><b style="padding: 10px 12px; background: #1A1A1A; color: #F3F0E7">Scale</b><b style="padding: 10px 12px; background: #1A1A1A; color: #F3F0E7">Height</b><b style="padding: 10px 12px; background: #1A1A1A; color: #F3F0E7">Name</b><b style="padding: 10px 12px; background: #1A1A1A; color: #F3F0E7">Peak cover</b>
+        <span style="padding: 10px 12px">1–15</span><span style="padding: 10px 12px">1.20</span><span style="padding: 10px 12px">106px</span><span style="padding: 10px 12px">41px</span><span style="padding: 10px 12px">~33%</span>
+        <span style="padding: 10px 12px; background: #E9E4D8">16–30</span><span style="padding: 10px 12px; background: #E9E4D8">1.00</span><span style="padding: 10px 12px; background: #E9E4D8">88px</span><span style="padding: 10px 12px; background: #E9E4D8">34px</span><span style="padding: 10px 12px; background: #E9E4D8">~46%</span>
+        <span style="padding: 10px 12px">31–40</span><span style="padding: 10px 12px">0.88</span><span style="padding: 10px 12px">77px</span><span style="padding: 10px 12px">30px</span><span style="padding: 10px 12px">~48%</span>
+        <span style="padding: 10px 12px; background: #E9E4D8">41–50</span><span style="padding: 10px 12px; background: #E9E4D8">0.78</span><span style="padding: 10px 12px; background: #E9E4D8">69px</span><span style="padding: 10px 12px; background: #E9E4D8">27px</span><span style="padding: 10px 12px; background: #E9E4D8">~47%</span>
+      </div>
+      <ul style="margin: 0; padding-left: 22px; font-size: 16px; line-height: 1.5">
+        <li>Cover = bauble area ÷ free board area (1920×1080 minus hero and QR). Tiers keep it under ~50%, so drift and collisions stay readable at any count.</li>
+        <li>Per-bauble variation tightens to ±5% around the tier scale. Floor: name text never under 26px.</li>
+        <li>Crossing a tier: the newcomer lands first, then 400ms later every bauble springs to the new scale over 700ms (--hb-ease-spring), staggered 12ms outward from the newcomer. Reads as the board making room.</li>
+        <li>Tiers only step down on the way up. When the count drops (exit, wipe) they step back up after a 2s delay, so the board never pumps.</li>
+        <li>Physics colliders and string anchors read the scaled size. Reduced motion: scale changes in one 200ms ease-out, no stagger.</li>
+      </ul>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-family: 'Special Elite', monospace; font-weight: 400; font-size: 24px; letter-spacing: 3px">VIEWPORT · FIXED 16:9 STAGE</h2>
+      <div style="display: flex; gap: 20px; align-items: flex-end">
+        <div style="display: flex; flex-direction: column; gap: 6px; align-items: center"><div style="width: 320px; height: 137px; background: #9A6B36; border: 2px solid #1A1A1A; display: flex; justify-content: center"><div style="width: 243px; height: 137px; background: #B8864B; border-left: 2px dashed #1A1A1A; border-right: 2px dashed #1A1A1A; box-sizing: border-box"></div></div><span style="font-size: 14px">21:9 · 3440×1440 → stage 2560×1440</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px; align-items: center"><div style="width: 160px; height: 90px; background: #B8864B; border: 2px solid #1A1A1A"></div><span style="font-size: 14px">16:9 · fills exactly</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px; align-items: center"><div style="width: 144px; height: 90px; background: #9A6B36; border: 2px solid #1A1A1A; display: flex; align-items: center"><div style="width: 144px; height: 81px; background: #B8864B; border-top: 2px dashed #1A1A1A; border-bottom: 2px dashed #1A1A1A; box-sizing: border-box"></div></div><span style="font-size: 14px">16:10 · thin bars top/bottom</span></div>
+      </div>
+      <ul style="margin: 0; padding-left: 22px; font-size: 16px; line-height: 1.5">
+        <li>The board is one 1920×1080 stage, scaled with transform: scale(min(vw/1920, vh/1080)) and centered. Width is capped by the aspect ratio, so an ultrawide never stretches the layout or the physics.</li>
+        <li>Outside the stage: the same cork texture on body, 20% darker (cork-edge), with the vignette strongest at the stage edge. It reads as more corkboard, not black bars.</li>
+        <li>Stage edges are the physics walls. Nothing drifts into the side bands.</li>
+        <li>Why not widen the board: the projector is 16:9, the density tiers assume a fixed area, and a 2560px-wide hero/QR spread is harder to scan from the back row.</li>
+        <li>/join: card max-width 440px, centered on any wider screen. /admin: already a 560px card.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":2100}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

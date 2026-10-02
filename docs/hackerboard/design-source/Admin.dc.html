@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hackerboard admin</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&amp;family=Kalam:wght@700&amp;family=Special+Elite&amp;family=Zilla+Slab:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Zilla Slab', serif; color: #1A1A1A; background-color: #B8864B; background-image: radial-gradient(ellipse at center, rgba(0,0,0,0) 50%, rgba(80,45,10,.35) 100%), radial-gradient(rgba(70,40,10,.38) 1.2px, rgba(0,0,0,0) 1.7px), radial-gradient(rgba(255,230,190,.28) 1px, rgba(0,0,0,0) 1.5px), radial-gradient(rgba(90,55,20,.28) 2px, rgba(0,0,0,0) 2.7px); background-size: 100% 100%, 13px 11px, 17px 19px, 41px 37px; background-position: 0 0, 0 0, 6px 9px, 20px 4px">
+  <main style="position: relative; width: 560px; box-sizing: border-box; background: #F3F0E7; padding: 52px 48px 44px 48px; display: flex; flex-direction: column; gap: 22px; box-shadow: 0 14px 24px rgba(40,20,0,.42)">
+    <div style="position: absolute; left: -22px; top: -20px; font-family: 'Special Elite', monospace; font-size: 22px; padding: 8px 24px; transform: rotate(-4deg); background: rgba(232,200,90,.94); clip-path: polygon(2% 0,98% 4%,100% 30%,97% 55%,100% 80%,97% 100%,3% 96%,0 70%,3% 45%,0 18%)">ADMIN · CASE XII</div>
+    <sc-if value="{{stampText}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; right: 30px; top: 30px; font-family: 'Special Elite', monospace; font-size: 22px; letter-spacing: 2px; color: #B3261E; border: 4px solid #B3261E; border-radius: 4px; padding: 4px 12px; transform: rotate(7deg)">{{stampText}}</div>
+    </sc-if>
+    <h1 style="margin: 0; font-family: 'Caveat Brush', cursive; font-weight: 400; font-size: 72px; line-height: .95">Board control</h1>
+
+    <sc-if value="{{isLocked}}" hint-placeholder-val="{{true}}">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <label for="hb-pass" style="font-size: 18px; font-weight: 700">Passphrase</label>
+        <input id="hb-pass" type="password" value="{{pass}}" onChange="{{noop}}" placeholder="Speak, friend" style="height: 56px; box-sizing: border-box; padding: 0 16px; border-radius: 10px; border: {{passBorder}}; background: #FFFFFF; font-family: 'Zilla Slab', serif; font-size: 22px; color: #1A1A1A">
+        <sc-if value="{{wrong}}" hint-placeholder-val="{{false}}">
+          <div role="alert" style="color: #B3261E; font-size: 17px; font-weight: 700">Wrong passphrase. The board stays as it is.</div>
+        </sc-if>
+      </div>
+      <button type="button" style="height: 56px; border-radius: 12px; border: 3px solid #1A1A1A; background: #1A1A1A; color: #F3F0E7; font-family: 'Kalam', cursive; font-weight: 700; font-size: 24px; padding-top: 5px">Unlock</button>
+    </sc-if>
+
+    <sc-if value="{{isReady}}" hint-placeholder-val="{{false}}">
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+        <div style="border: 2px solid #1A1A1A; border-radius: 8px; padding: 14px 18px; display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'Special Elite', monospace; font-size: 15px; letter-spacing: 2px; color: #4A4540">ON BOARD</span><span style="font-family: 'Kalam', cursive; font-weight: 700; font-size: 40px; line-height: 1.1">50 / 50</span></div>
+        <div style="border: 2px solid #1A1A1A; border-radius: 8px; padding: 14px 18px; display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'Special Elite', monospace; font-size: 15px; letter-spacing: 2px; color: #4A4540">RECRUITED</span><span style="font-family: 'Kalam', cursive; font-weight: 700; font-size: 40px; line-height: 1.1">63</span></div>
+      </div>
+      <p style="margin: 0; font-size: 18px; font-weight: 500; line-height: 1.4; color: #4A4540">Wiping clears every bauble and string from the board and lets every phone join again.</p>
+      <button type="button" style="height: 64px; border-radius: 12px; border: 3px solid #1A1A1A; background: #B3261E; color: #F3F0E7; box-shadow: 0 5px 0 #1A1A1A; font-family: 'Kalam', cursive; font-weight: 700; font-size: 28px; padding-top: 6px">Wipe the board</button>
+    </sc-if>
+
+    <sc-if value="{{isConfirm}}" hint-placeholder-val="{{false}}">
+      <div role="alertdialog" aria-labelledby="hb-confirm" style="border: 3px solid #B3261E; border-radius: 10px; padding: 22px 22px 20px 22px; display: flex; flex-direction: column; gap: 12px; background: #FBEDEA">
+        <h2 id="hb-confirm" style="margin: 0; font-family: 'Kalam', cursive; font-weight: 700; font-size: 30px; line-height: 1.1; color: #8F1D17">Wipe all 50 baubles?</h2>
+        <p style="margin: 0; font-size: 18px; font-weight: 500; line-height: 1.4">Everyone comes off the board and the strings go with them. This can't be undone.</p>
+        <div style="display: flex; gap: 12px; margin-top: 6px">
+          <button type="button" style="flex-grow: 1; height: 56px; border-radius: 12px; border: 3px solid #1A1A1A; background: #F3F0E7; color: #1A1A1A; font-family: 'Kalam', cursive; font-weight: 700; font-size: 24px; padding-top: 5px">Keep it</button>
+          <button type="button" style="flex-grow: 1; height: 56px; border-radius: 12px; border: 3px solid #1A1A1A; background: #B3261E; color: #F3F0E7; box-shadow: 0 5px 0 #1A1A1A; font-family: 'Kalam', cursive; font-weight: 700; font-size: 24px; padding-top: 5px">Yes, wipe it</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isDone}}" hint-placeholder-val="{{false}}">
+      <p style="margin: 0; font-size: 20px; font-weight: 500; line-height: 1.4">The board is clean. 0 / 50 on board, ready for the next crowd.</p>
+      <button type="button" style="height: 56px; border-radius: 12px; border: 3px solid #1A1A1A; background: #F3F0E7; color: #1A1A1A; font-family: 'Kalam', cursive; font-weight: 700; font-size: 24px; padding-top: 5px">Back to control</button>
+    </sc-if>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"screen":{"editor":"enum","options":["locked","wrong","ready","confirm","wiped"],"default":"locked"},"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var s = this.props.screen ?? 'locked';
+    var stamps = { wrong: 'DENIED', ready: 'UNLOCKED', confirm: 'UNLOCKED', wiped: 'CASE CLOSED' };
+    return {
+      isLocked: s === 'locked' || s === 'wrong',
+      wrong: s === 'wrong',
+      pass: s === 'wrong' ? 'opensesame' : '',
+      passBorder: s === 'wrong' ? '3px solid #B3261E' : '2px solid #1A1A1A',
+      noop: function () {},
+      isReady: s === 'ready',
+      isConfirm: s === 'confirm',
+      isDone: s === 'wiped',
+      stampText: stamps[s] ?? ''
+    };
+  }
+}
+</script>
+</body>
+</html>

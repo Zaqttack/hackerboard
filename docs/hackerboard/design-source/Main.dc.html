@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hackerboard board</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&amp;family=Kalam:wght@700&amp;family=Special+Elite&amp;family=Zilla+Slab:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1920px; height: 1080px; position: relative; overflow: hidden; font-family: 'Kalam', cursive; color: #1A1A1A; background-color: #B8864B; background-image: radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(80,45,10,.38) 100%), radial-gradient(rgba(70,40,10,.38) 1.2px, rgba(0,0,0,0) 1.7px), radial-gradient(rgba(255,230,190,.28) 1px, rgba(0,0,0,0) 1.5px), radial-gradient(rgba(90,55,20,.28) 2px, rgba(0,0,0,0) 2.7px); background-size: 100% 100%, 13px 11px, 17px 19px, 41px 37px; background-position: 0 0, 0 0, 6px 9px, 20px 4px">
+
+  <sc-for list="{{strings}}" as="st" hint-placeholder-count="9">
+    <div style="position: absolute; left: {{st.x}}px; top: {{st.y}}px; width: {{st.len}}px; height: 5px; background: #B3261E; border-radius: 3px; transform: rotate({{st.deg}}deg); transform-origin: 0 50%; box-shadow: 0 3px 3px rgba(0,0,0,.28)"></div>
+  </sc-for>
+
+  <div style="position: absolute; left: 64px; top: 64px; width: 660px; transform: rotate(-1.5deg); filter: drop-shadow(0 12px 18px rgba(40,20,0,.4)); z-index: 2">
+    <div style="background: #F3F0E7; padding: 44px 52px 60px 52px; display: flex; flex-direction: column; gap: 6px; clip-path: polygon(0 0,100% 0,100% 92%,97% 96%,94% 91%,90% 97%,86% 93%,82% 98%,77% 92%,73% 97%,68% 93%,63% 99%,58% 94%,53% 98%,48% 92%,43% 97%,38% 93%,33% 98%,28% 92%,23% 97%,18% 94%,13% 99%,8% 93%,4% 97%,0 94%)">
+      <h1 style="margin: 0; font-family: 'Caveat Brush', cursive; font-weight: 400; font-size: 128px; line-height: .9; color: #1A1A1A">Hackerboard</h1>
+      <p style="margin: 0; font-size: 38px; line-height: 1.1; color: #B3261E">Scan to join the crew →</p>
+      <div style="display: flex; align-items: center; gap: 20px; margin-top: 14px">
+        <div style="font-family: 'Special Elite', monospace; font-size: 26px; letter-spacing: 2px; color: #B3261E; border: 4px solid #B3261E; border-radius: 6px; padding: 6px 14px; transform: rotate(-3deg); white-space: nowrap">{{counter}}</div>
+        <div style="font-family: 'Special Elite', monospace; font-size: 20px; letter-spacing: 3px; color: #1A1A1A">CASE NO. XII</div>
+      </div>
+    </div>
+    <div style="position: absolute; left: -28px; top: -22px; padding: 10px 30px; transform: rotate(-4deg); font-family: 'Special Elite', monospace; font-size: 28px; color: #1A1A1A; background: rgba(232,200,90,.94); clip-path: polygon(2% 0,98% 4%,100% 30%,97% 55%,100% 80%,97% 100%,3% 96%,0 70%,3% 45%,0 18%)">RowdyHacks XII</div>
+  </div>
+
+  <div style="position: absolute; right: 64px; top: 52px; width: 340px; transform: rotate(2deg); filter: drop-shadow(0 12px 18px rgba(40,20,0,.4)); z-index: 2">
+    <div style="background: #F3F0E7; padding: 36px 40px 28px 40px; display: flex; flex-direction: column; align-items: center; gap: 14px">
+      <div style="width: 260px; height: 260px; background: #FFFFFF; box-sizing: border-box; padding: 20px; display: flex">
+        <div style="flex-grow: 1; border: 3px dashed #1A1A1A; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Special Elite', monospace; color: #1A1A1A; gap: 6px">
+          <span style="font-size: 44px">QR</span>
+          <span style="font-size: 18px">220 × 220</span>
+          <span style="font-size: 14px">20px quiet zone</span>
+        </div>
+      </div>
+      <div style="font-size: 34px; line-height: 1">Scan to join</div>
+      <div style="font-family: 'Special Elite', monospace; font-size: 24px; color: #B3261E">[your-url]/join</div>
+    </div>
+    <div style="position: absolute; left: 156px; top: -10px; width: 28px; height: 28px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #E25A50, #B3261E 55%, #6E1510); box-shadow: 0 4px 5px rgba(0,0,0,.45)"></div>
+  </div>
+
+  <sc-if value="{{isEmpty}}" hint-placeholder-val="{{false}}">
+    <div style="position: absolute; left: 861px; top: 596px; width: 988px; height: 5px; background: #B3261E; border-radius: 3px; transform: rotate(-33.4deg); transform-origin: 0 50%; box-shadow: 0 3px 3px rgba(0,0,0,.28)"></div>
+    <div style="position: absolute; left: 820px; top: 600px; display: flex; align-items: center; gap: 14px; height: 88px; box-sizing: border-box; padding: 0 34px 0 7px; border-radius: 44px; background: rgba(243,240,231,.55); border: 3px dashed #1A1A1A; transform: rotate(-2deg)">
+      <div style="position: absolute; left: 30px; top: -12px; width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #E25A50, #B3261E 55%, #6E1510); box-shadow: 0 3px 4px rgba(0,0,0,.45)"></div>
+      <div style="width: 68px; height: 68px; border-radius: 50%; background: rgba(255,255,255,.7); border: 3px dashed #1A1A1A; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-family: 'Caveat Brush', cursive; font-size: 44px">?</div>
+      <span style="font-weight: 700; font-size: 34px; line-height: 1; padding-top: 6px; white-space: nowrap">your name here</span>
+    </div>
+    <div style="position: absolute; left: 900px; top: 760px; background: #F3F0E7; padding: 18px 28px; transform: rotate(3deg); box-shadow: 0 10px 16px rgba(40,20,0,.35); display: flex; flex-direction: column; gap: 4px">
+      <div style="font-family: 'Caveat Brush', cursive; font-size: 52px; line-height: 1; color: #B3261E">Be the first recruit.</div>
+      <div style="font-size: 26px; line-height: 1.1">Scan the code up top ↗</div>
+    </div>
+  </sc-if>
+
+  <sc-for list="{{baubles}}" as="b" hint-placeholder-count="10">
+    <div style="position: absolute; left: {{b.x}}px; top: {{b.y}}px; transform: rotate({{b.r}}deg) scale({{b.s}}); transform-origin: 44px 44px; display: flex; align-items: center; gap: 14px; height: 88px; box-sizing: border-box; padding: 0 30px 0 7px; border-radius: 44px; background: {{b.bg}}; border: 3px solid #1A1A1A; box-shadow: 0 6px 0 rgba(26,26,26,.2), 0 14px 22px rgba(40,20,0,.38)">
+      <sc-if value="{{b.isNew}}" hint-placeholder-val="{{false}}">
+        <div style="position: absolute; left: -18px; top: -18px; right: -18px; bottom: -18px; border: 4px dashed #B3261E; border-radius: 62px"></div>
+        <div style="position: absolute; left: -40px; top: -40px; right: -40px; bottom: -40px; border: 3px solid rgba(179,38,30,.45); border-radius: 84px"></div>
+        <div style="position: absolute; left: 96px; top: -80px; font-family: 'Special Elite', monospace; font-size: 22px; letter-spacing: 2px; color: #B3261E; background: #F3F0E7; border: 3px solid #B3261E; border-radius: 4px; padding: 4px 12px; transform: rotate(-6deg); white-space: nowrap">NEW RECRUIT</div>
+      </sc-if>
+      <div style="position: absolute; left: 30px; top: -12px; width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #E25A50, #B3261E 55%, #6E1510); box-shadow: 0 3px 4px rgba(0,0,0,.45)"></div>
+      <div style="width: 68px; height: 68px; flex-shrink: 0; border-radius: 50%; background: #FFFFFF; border: 3px solid #1A1A1A; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 42px; line-height: 1">{{b.emoji}}</div>
+      <span style="font-weight: 700; font-size: 34px; line-height: 1; white-space: nowrap; padding-top: 6px">{{b.name}}</span>
+    </div>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"variant":{"editor":"enum","options":["empty","ten","arrival","full"],"default":"ten"},"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var variant = this.props.variant ?? 'ten';
+    var fills = ['#F3F0E7', '#E8C85A', '#DCC395', '#BCD2E8', '#F1B9B1', '#C4E0C0'];
+    var emoji = ['🦊','🐙','🐸','🦉','🐢','🦝','🐝','🐧','🦄','🐻','🦈','🐞','🦒','🐊','🦋','🐳','🦔','🐼','🐨','🐯','🦁','🐮','🐷','🐵','🦀','🦜','🦩','🦥','🦦','🐌'];
+    function h(n) { var v = Math.sin(n * 12.9898) * 43758.5453; return v - Math.floor(v); }
+    var list = [];
+    if (variant === 'ten' || variant === 'arrival') {
+      list = [
+        ['Maya', '🦊', 880, 80, -3, 1, 1, -1],
+        ['Dev Patel', '🐙', 1100, 230, 2, 1.06, 0, 0],
+        ['Priya R', '🦉', 140, 460, -2, 1, 3, 0],
+        ['xX_h4ck3r_Xx', '🦝', 620, 430, -4, 1.04, 4, 2],
+        ['Luis', '🐝', 1520, 520, 3, 1.1, 2, -1],
+        ['Ana Lucía', '🦄', 300, 700, -2.5, 1.02, 5, 2],
+        ['Theo', '🐻', 900, 640, 3, 1, 3, 3],
+        ['Kenji', '🦈', 1250, 760, -1.5, 0.95, 0, 4],
+        ['Rosa M.', '🐞', 560, 880, 2.5, 1, 1, -1],
+        ['Ifeoma', '🦒', 1600, 860, -3, 0.98, 4, 7]
+      ];
+      if (variant === 'arrival') list.push(['Grace H', '🐼', 1010, 880, -2, 1.1, 0, 6]);
+    } else if (variant === 'full') {
+      var names = ['Maya','Dev Patel','Priya R','xX_h4ck3r_Xx','Luis','Ana Lucía','Theo','Kenji','Rosa M.','Ifeoma','Chris','Nadia','Bo','Tomás','Grace H','Bartholomew Castillo','Sam O.','Lena','Marcus T','Aiyana','Omar','Jun','Kiki','Diego R.','null_ptr','Hana','Wes','Zara K','Pavel','Mei','Andre','Sofía','Ty','Noor','Elijah B.','Quinn','Ravi','Lupe','Ash','Camila Reyes','Dmitri','Fatima','Gus','Ivy','Kofi','Lorenzo','Mina','Ozzy','Rin','Yusuf'];
+      var walls = [[30, 30, 770, 430], [1480, 20, 1900, 500]];
+      var rects = [];
+      function hits(r, slack) {
+        for (var k = 0; k < walls.length; k++) { var w = walls[k]; if (r[0] < w[2] && r[2] > w[0] && r[1] < w[3] && r[3] > w[1]) return true; }
+        for (var k2 = 0; k2 < rects.length; k2++) { var q = rects[k2]; if (r[0] < q[2] - slack && r[2] > q[0] + slack && r[1] < q[3] - slack && r[3] > q[1] + slack) return true; }
+        return false;
+      }
+      var seed = 1;
+      list = names.map(function (nm, i) {
+        var bw = (88 + nm.length * 17 + 40) * 0.78, bh = 70, x = 0, y = 0;
+        for (var t = 0; t < 600; t++) {
+          x = 30 + h(seed++) * (1860 - bw); y = 40 + h(seed++) * (1000 - bh);
+          if (!hits([x, y, x + bw, y + bh], t < 300 ? 0 : 18)) break;
+        }
+        rects.push([x, y, x + bw, y + bh]);
+        return [nm, emoji[i % 30], Math.round(x), Math.round(y), Math.round((h(i + 201) - 0.5) * 80) / 10, Math.round((0.92 + h(i + 301) * 0.18) * 100) / 100, Math.floor(h(i + 401) * 6), -1];
+      });
+      var degree = list.map(function () { return 0; });
+      list.forEach(function (b, i) {
+        if (i === 0) return;
+        var chance = i < 10 ? 0.8 : i < 25 ? 0.4 : 0.2;
+        if (h(i + 601) >= chance) return;
+        var d = [];
+        for (var j = 0; j < i; j++) { if (degree[j] >= 3) continue; var dx = list[j][2] - b[2], dy = list[j][3] - b[3]; d.push([dx * dx + dy * dy, j]); }
+        if (!d.length) return;
+        d.sort(function (a, c) { return a[0] - c[0]; });
+        var pick = d[Math.min(d.length - 1, Math.floor(h(i + 501) * 5))];
+        b[7] = pick[1]; degree[pick[1]]++; degree[i]++;
+      });
+    }
+    var last = list.length - 1;
+    var n = list.length;
+    var tier = n <= 15 ? 1.2 : n <= 30 ? 1 : n <= 40 ? 0.88 : 0.78;
+    list.forEach(function (b) { b[5] = Math.round(tier * (1 + (b[5] - 1) * 0.5) * 100) / 100; });
+    var baubles = list.map(function (b, i) {
+      return { name: b[0], emoji: b[1], x: b[2], y: b[3], r: b[4], s: b[5], bg: fills[b[6]], isNew: variant === 'arrival' && i === last };
+    });
+    function pin(b) { return [b[2] + 44 - 3 * b[5], b[3] + 44 - 45 * b[5]]; }
+    var strings = [];
+    list.forEach(function (b, i) {
+      if (b[7] < 0) return;
+      var p = list[b[7]];
+      var a = pin(p), c = pin(b);
+      var x1 = a[0], y1 = a[1], x2 = c[0], y2 = c[1];
+      var dx = x2 - x1, dy = y2 - y1;
+      var len = Math.sqrt(dx * dx + dy * dy);
+      if (variant === 'arrival' && i === last) len = len * 0.62;
+      strings.push({ x: Math.round(x1), y: Math.round(y1 - 2.5), len: Math.round(len), deg: Math.round(Math.atan2(dy, dx) * 1800 / Math.PI) / 10 });
+    });
+    var counter = variant === 'full' ? 'FULL HOUSE 50 / 50' : 'RECRUITS ' + list.length + ' / 50';
+    return { baubles: baubles, strings: strings, counter: counter, isEmpty: variant === 'empty' };
+  }
+}
+</script>
+</body>
+</html>
