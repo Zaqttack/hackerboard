@@ -66,10 +66,9 @@ D1 table `entries(id, name, emoji, fill, tied_to, created_at)` in `migrations/00
 - Arrival animation and string draw observed live in a foreground tab on production.
 - OG preview image (only title and description tags exist).
 
-## Talk plan (NOT STARTED, pending sign-off on `main`)
-- Branches: `main` (finished), `demo` (live build from tag `demo-start`), `rehearsal-N` (dry runs from `demo-start`). Never force push; start a fresh run by branching from the tag under a new name.
-- Candidate checkpoints on `main` history: `demo-start` = `ed7b25c` (scaffold + tokens + fonts + primitives, Hero, QRCard, static Bauble), `act-1` = `a4728ba` (static board, arrival animation, join UI), `act-3` = `eb2d2a4` (API, join, admin, polling, Turnstile, tests), `act-4` = `d64c4a8` (physics). Later commits on `main` are fixes and polish. Tags will be placed once the acts are settled.
-- Acts, in order: board UI local, deploy static, API + join + admin + protections (audience joins), physics and motion. Each act is one prepared prompt plus optional follow-ups, in `prompts/act-N.md`.
-- Goal: after all acts `demo` is functionally the same as `main`; `main` is the fallback.
-- Model for the live session: Sonnet 5.5, same model in every rehearsal.
-- Fallback: phone hotspot.
+## Talk plan
+Runbook and the copy-paste prompts live in `docs/DEMO.md`; the traps and deviations the prompts rely on are in `docs/hackerboard/IMPLEMENTATION-NOTES.md`.
+- `main` is the finished app. The starting point for every run is the `demo-start` tag: `main` with the pieces the prompts build removed (placeholder routes, a health-only Worker, no hooks, API client, physics, validation, admin, join components or tests), and everything else kept (workflows, scripts, headers and CSP, tokens, fonts, primitives, Hero, QRCard, static Bauble, dependencies, docs).
+- Each run: `git checkout -b demo-<MMDD-HHMM> demo-start`, then prompts 0 to 8. Branches named `demo*` or `rehearsal*` deploy on push to `hackerboard-<branch>` with their own database; deleting the branch deletes them.
+- Fallback: `git checkout main -- .`, or show `main`.
+- Model for the live session: Sonnet 5.5, the same one used in rehearsal. Fallback network: phone hotspot.
