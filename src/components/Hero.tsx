@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { Stamp } from "./Stamp.tsx";
 import { Tape } from "./Tape.tsx";
 
@@ -9,16 +8,9 @@ type HeroProps = {
 
 export function Hero({ count, total = 50 }: HeroProps) {
   const counter = count >= total ? `FULL HOUSE ${total} / ${total}` : `RECRUITS ${count} / ${total}`;
-  const previous = useRef(count);
-  const grew = count > previous.current;
-
-  useEffect(() => {
-    previous.current = count;
-  }, [count]);
 
   return (
     <div
-      data-wall
       className="absolute top-16 left-16 z-30 w-[660px] -rotate-[1.5deg] drop-shadow-[0_12px_18px_rgba(40,20,0,0.4)]"
     >
       <div className="torn-bottom bg-paper flex flex-col gap-1.5 px-[52px] pt-11 pb-[60px]">
@@ -27,9 +19,7 @@ export function Hero({ count, total = 50 }: HeroProps) {
           Scan to join the crew →
         </p>
         <div className="mt-3.5 flex items-center gap-5">
-          <div key={count} className={grew ? "anim-tick" : ""}>
-            <Stamp text={counter} />
-          </div>
+          <Stamp text={counter} />
           <div className="font-stamp text-xl tracking-[3px]">CASE NO. XII</div>
         </div>
       </div>
