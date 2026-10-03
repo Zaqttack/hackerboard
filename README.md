@@ -54,7 +54,7 @@ Each deployment has its own database, so test data never touches `main`.
 
 ## Run the demo
 
-The talk rebuilds this app live from the `demo-start-2` tag by pasting prompts in order. See [docs/DEMO.md](docs/DEMO.md) for the runbook and the prompts. Design spec: [docs/hackerboard/DESIGN.md](docs/hackerboard/DESIGN.md), with notes on where the finished app differs and the traps to avoid in [docs/hackerboard/IMPLEMENTATION-NOTES.md](docs/hackerboard/IMPLEMENTATION-NOTES.md).
+The talk rebuilds this app live from the `demo-start` tag by pasting prompts in order. See [docs/DEMO.md](docs/DEMO.md) for the runbook and the prompts. Design spec: [docs/hackerboard/DESIGN.md](docs/hackerboard/DESIGN.md), with notes on where the finished app differs and the traps to avoid in [docs/hackerboard/IMPLEMENTATION-NOTES.md](docs/hackerboard/IMPLEMENTATION-NOTES.md).
 
 ## Security
 

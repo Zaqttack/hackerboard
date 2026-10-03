@@ -3,7 +3,7 @@
 Hackerboard is built live in a fresh Claude session by pasting the prompts below, in order. Each prompt builds one slice of the app; the finished version is on `main`.
 
 ## Rules for the session
-- Never build on `main`. Every run starts on a new branch from the `demo-start-2` tag, named `demo-<MMDD-HHMM>`.
+- Never build on `main`. Every run starts on a new branch from the `demo-start` tag, named `demo-<MMDD-HHMM>`.
 - Any branch named `demo*` (or `rehearsal*`) deploys by itself on push to its own Worker (`hackerboard-<branch>`) and its own database. Nothing touches `main`'s board.
 - Claude commits and pushes only when a prompt says so.
 - If a step goes sideways, take the finished app: `git checkout main -- .` then commit, or just show the `main` deployment (https://hackerboard.zaquariah.workers.dev).
@@ -25,7 +25,7 @@ Hackerboard is built live in a fresh Claude session by pasting the prompts below
 ```
 We're doing the live Hackerboard demo. Read CLAUDE.md, docs/DEMO.md, docs/hackerboard/DESIGN.md and docs/hackerboard/IMPLEMENTATION-NOTES.md first.
 
-Don't work on main. Create a new branch from the demo-start-2 tag named demo-<MMDD-HHMM> (use the current date and time), run pnpm install, then run typecheck, test and build and confirm they pass.
+Don't work on main. Create a new branch from the demo-start tag named demo-<MMDD-HHMM> (use the current date and time), run pnpm install, then run typecheck, test and build and confirm they pass.
 
 Then tell me, in a few bullets: the branch name, what already exists in the repo, and what we still need to build. Don't write any code and don't commit.
 ```
