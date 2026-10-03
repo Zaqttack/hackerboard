@@ -16,7 +16,7 @@ Where the finished app differs from `DESIGN.md`, and the traps that cost time. R
 - `GET /api/me?id=` reports `onBoard` as "fewer than 50 entries are newer".
 - `tied_to` is chosen on the server from the 50 newest entries that have fewer than 3 strings; odds are 80% for recruits 2 to 10, 40% for 11 to 25, 20% for 26 to 50. Never tie the first recruit.
 - Fill is random from the six fills and never equals the previous entry's fill.
-- Turnstile: the client renders the widget explicitly. With no `VITE_TURNSTILE_SITE_KEY` the user counts as verified and the server skips verification when there is no `TURNSTILE_SECRET`. Non-`main` branches are deployed with Cloudflare's always-pass test keys.
+- Turnstile: the client renders the widget explicitly. With no `VITE_TURNSTILE_SITE_KEY` the user counts as verified and the server skips verification when there is no `TURNSTILE_SECRET`. Every deployed branch uses the real widget when `TURNSTILE_SECRET` and `VITE_TURNSTILE_SITE_KEY` are set (the widget must allow the account's `workers.dev` hostname); only when they are missing do non-`main` branches fall back to Cloudflare's always-pass test keys.
 
 ## Board and animation
 - The stage is a fixed 1920 by 1080 box scaled with `transform: scale(min(vw/1920, vh/1080))`. Physics coordinates are stage coordinates, so they do not change with the window.

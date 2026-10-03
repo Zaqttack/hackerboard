@@ -1,7 +1,7 @@
 # Hackerboard (RowdyHacks XII talk: build a website with AI)
 
 ## Status
-`main` is built, deployed and being polished. Talk material (prompts, tags, `demo-start`, rehearsals) has NOT been started: nothing from "Talk plan" below happens until `main` is signed off.
+`main` is built, deployed and being polished. Talk material (prompts, tags, `demo-start-2`, rehearsals) has NOT been started: nothing from "Talk plan" below happens until `main` is signed off.
 
 Live: https://hackerboard.zaquariah.workers.dev (repo `Zaqttack/hackerboard`, public).
 
@@ -53,7 +53,7 @@ D1 table `entries(id, name, emoji, fill, tied_to, created_at)` in `migrations/00
 - `cleanup.yml` deletes a branch's Worker and database when a `demo*` or `rehearsal*` branch is deleted.
 - `wipe.yml` (manual dispatch) empties the board of the branch it runs on, using the Cloudflare credentials in GitHub (no admin passphrase needed).
 - Secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ADMIN_KEY`, `TURNSTILE_SECRET`. Variable: `VITE_TURNSTILE_SITE_KEY`.
-- Turnstile: `main` uses the real widget (hostname `hackerboard.zaquariah.workers.dev`). If either value is missing, `main` runs with no captcha. Every other branch always uses Cloudflare's always-pass test keys.
+- Turnstile: every deployed branch uses the real widget when `TURNSTILE_SECRET` and `VITE_TURNSTILE_SITE_KEY` are set (hostname `zaquariah.workers.dev` must be allowed on the widget). `main` runs with no captcha if they are missing; other branches then fall back to Cloudflare's always-pass test keys.
 - Local dev: `pnpm dev` (UI only) or `pnpm run cf:dev` (Worker + local D1; copy `.dev.vars.example` to `.dev.vars`).
 
 ## Verified on `main`
@@ -68,7 +68,7 @@ D1 table `entries(id, name, emoji, fill, tied_to, created_at)` in `migrations/00
 
 ## Talk plan
 Runbook and the copy-paste prompts live in `docs/DEMO.md`; the traps and deviations the prompts rely on are in `docs/hackerboard/IMPLEMENTATION-NOTES.md`.
-- `main` is the finished app. The starting point for every run is the `demo-start` tag: `main` with the pieces the prompts build removed (placeholder routes, a health-only Worker, no hooks, API client, physics, validation, admin, join components or tests), and everything else kept (workflows, scripts, headers and CSP, tokens, fonts, primitives, Hero, QRCard, static Bauble, dependencies, docs).
-- Each run: `git checkout -b demo-<MMDD-HHMM> demo-start`, then prompts 0 to 8. Branches named `demo*` or `rehearsal*` deploy on push to `hackerboard-<branch>` with their own database; deleting the branch deletes them.
+- `main` is the finished app. The starting point for every run is the `demo-start-2` tag: `main` with the pieces the prompts build removed (placeholder routes, a health-only Worker, no hooks, API client, physics, validation, admin, join components or tests), and everything else kept (workflows, scripts, headers and CSP, tokens, fonts, primitives, Hero, QRCard, static Bauble, dependencies, docs).
+- Each run: `git checkout -b demo-<MMDD-HHMM> demo-start-2`, then prompts 0 to 8. Branches named `demo*` or `rehearsal*` deploy on push to `hackerboard-<branch>` with their own database; deleting the branch deletes them.
 - Fallback: `git checkout main -- .`, or show `main`.
 - Model for the live session: Sonnet 5.5, the same one used in rehearsal. Fallback network: phone hotspot.
