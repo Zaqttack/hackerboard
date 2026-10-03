@@ -98,3 +98,50 @@
     clip-path: polygon(0 0, 100% 0, 100% 92%, 97% 96%, 94% 91%, 90% 97%, 86% 93%, 82% 98%, 77% 92%, 73% 97%, 68% 93%, 63% 99%, 58% 94%, 53% 98%, 48% 92%, 43% 97%, 38% 93%, 33% 98%, 28% 92%, 23% 97%, 18% 94%, 13% 99%, 8% 93%, 4% 97%, 0 94%);
   }
 }
+
+@keyframes bauble-drop {
+  from { translate: 0 -160px; opacity: 0; }
+  to { translate: 0 0; opacity: 1; }
+}
+
+@keyframes bauble-squash {
+  from { scale: 1.18 0.82; }
+  to { scale: 1 1; }
+}
+
+@keyframes pin-push {
+  from { scale: 1.6; }
+  to { scale: 1; }
+}
+
+@keyframes ring-burst {
+  from { scale: 0.7; opacity: 1; }
+  to { scale: 1.5; opacity: 0; }
+}
+
+@keyframes stamp-slap {
+  0% { scale: 2; opacity: 0; animation-timing-function: var(--ease-out); }
+  9% { scale: 1; opacity: 1; }
+  81% { scale: 1; opacity: 1; }
+  100% { scale: 1; opacity: 0; }
+}
+
+@keyframes counter-tick {
+  from { scale: 1.25; }
+  to { scale: 1; }
+}
+
+@keyframes ghost-breathe {
+  from { scale: 1; }
+  to { scale: 1.03; }
+}
+
+@layer components {
+  .arrive-drop { animation: bauble-drop 260ms var(--ease-fall) both; }
+  .arrive-squash { transform-origin: 50% 100%; animation: bauble-squash 220ms var(--ease-spring) 260ms; }
+  .arrive-pin { animation: pin-push 160ms var(--ease-spring) 300ms; }
+  .ring-burst { opacity: 0; animation: ring-burst 650ms var(--ease-out) var(--ring-delay, 300ms) both; }
+  .arrive-stamp { animation: stamp-slap 1950ms linear 850ms both; }
+  .counter-tick { animation: counter-tick 200ms var(--ease-spring); }
+  .ghost-breathe { animation: ghost-breathe 2400ms ease-in-out infinite alternate; }
+}

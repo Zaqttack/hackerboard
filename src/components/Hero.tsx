@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Stamp } from "./Stamp.tsx";
 import { Tape } from "./Tape.tsx";
 
@@ -7,7 +8,23 @@ type HeroProps = {
 };
 
 export function Hero({ count, total = 50 }: HeroProps) {
-  const counter = count >= total ? `FULL HOUSE ${total} / ${total}` : `RECRUITS ${count} / ${total}`;
+  const [shown, setShown] = useState(count);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    if (count < shown) {
+      setShown(count);
+      return;
+    }
+    if (count === shown) return;
+    const timer = setTimeout(() => {
+      setShown(count);
+      setTick((t) => t + 1);
+    }, 850);
+    return () => clearTimeout(timer);
+  }, [count, shown]);
+
+  const counter = shown >= total ? `FULL HOUSE ${total} / ${total}` : `RECRUITS ${shown} / ${total}`;
 
   return (
     <div
@@ -19,7 +36,7 @@ export function Hero({ count, total = 50 }: HeroProps) {
           Scan to join the crew →
         </p>
         <div className="mt-3.5 flex items-center gap-5">
-          <Stamp text={counter} />
+          <Stamp key={tick} text={counter} className={tick > 0 ? "counter-tick" : ""} />
           <div className="font-stamp text-xl tracking-[3px]">CASE NO. XII</div>
         </div>
       </div>
