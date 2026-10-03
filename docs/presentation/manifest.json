@@ -1,0 +1,138 @@
+{
+  "title": "Case No. XII: The Website Heist | RowdyHacks XII",
+  "author": "Zaquariah Holland",
+  "team": "Swivel",
+  "year": "2026",
+  "slides": [
+    {
+      "file": "title.html",
+      "type": "title",
+      "description": "Case No. XII: The Website Heist"
+    },
+    {
+      "file": "who-i-am.html",
+      "type": "custom",
+      "description": "Headshot, roles, LinkedIn and GitHub QR codes"
+    },
+    {
+      "file": "goal.html",
+      "type": "takeaways",
+      "description": "Workshop goal: build with AI quickly"
+    },
+    {
+      "file": "srcprint.html",
+      "type": "custom",
+      "description": "Example 1: srcprint.com screenshot, under an hour"
+    },
+    {
+      "file": "the-recipe.html",
+      "type": "numbered-steps",
+      "description": "The prep behind short prompts"
+    },
+    {
+      "file": "stack.html",
+      "type": "tips-grid",
+      "description": "Tools and tech: Claude Code, VS Code, React, Vite, Tailwind, Cloudflare, GitHub Actions"
+    },
+    {
+      "file": "skills.html",
+      "type": "custom",
+      "description": "Popular skills: grill-me, frontend-design, superpowers"
+    },
+    {
+      "file": "prep-done.html",
+      "type": "dark-accent",
+      "description": "Design, requirements, scaffold and pipeline already done"
+    },
+    {
+      "file": "what-we-build.html",
+      "type": "demo-intro",
+      "description": "Hackerboard screenshot and the four demo phases"
+    },
+    {
+      "file": "demo-handoff.html",
+      "type": "custom",
+      "description": "Switch to VS Code"
+    },
+    {
+      "file": "recap.html",
+      "type": "takeaways",
+      "description": "What just happened"
+    },
+    {
+      "file": "portfolio.html",
+      "type": "custom",
+      "description": "Example 2: zaquariah.dev screenshot and size comparison"
+    },
+    {
+      "file": "deploy-your-own.html",
+      "type": "numbered-steps",
+      "description": "Fork and deploy steps, replay the demo"
+    },
+    {
+      "file": "takeaways.html",
+      "type": "takeaways",
+      "description": "Three things to remember"
+    },
+    {
+      "file": "prize-intro.html",
+      "type": "custom",
+      "description": "Hype slide: exclusive swag up for grabs"
+    },
+    {
+      "file": "q1-d1.html",
+      "type": "custom",
+      "description": "Prize question 1: Workshop"
+    },
+    {
+      "file": "a1-d1.html",
+      "type": "custom",
+      "description": "Prize answer 1: D1"
+    },
+    {
+      "file": "q2-swivel.html",
+      "type": "custom",
+      "description": "Prize question 2: Swivel"
+    },
+    {
+      "file": "a2-swivel.html",
+      "type": "custom",
+      "description": "Prize answer 2: SWBC"
+    },
+    {
+      "file": "q3-heist.html",
+      "type": "custom",
+      "description": "Prize question 3: Heist movie"
+    },
+    {
+      "file": "a3-heist.html",
+      "type": "custom",
+      "description": "Prize answer 3: A spinning top"
+    },
+    {
+      "file": "q4-actions.html",
+      "type": "custom",
+      "description": "Prize question 4: Workshop"
+    },
+    {
+      "file": "a4-actions.html",
+      "type": "custom",
+      "description": "Prize answer 4: GitHub Actions"
+    },
+    {
+      "file": "internships.html",
+      "type": "custom",
+      "description": "Swivel internships with one large QR code"
+    },
+    {
+      "file": "questions.html",
+      "type": "closing",
+      "description": "Questions?"
+    },
+    {
+      "file": "closing.html",
+      "type": "custom",
+      "description": "Thanks, board screenshot, LinkedIn, GitHub, internships and repo QR codes"
+    }
+  ]
+}

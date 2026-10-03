@@ -1,0 +1,138 @@
+/* SWIVEL Presentation Styles */
+/* Shared CSS for all presentations. Referenced via <link> tag. */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; overflow: hidden; height: 100%; }
+
+/* --- Slides --- */
+.slide {
+  display: none; width: 100vw; height: 100vh;
+  padding: 3rem 4rem; position: absolute; top: 0; left: 0;
+  opacity: 0; transition: opacity 0.4s ease;
+}
+.slide.active { display: flex; opacity: 1; }
+
+/* --- Fixed UI --- */
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 4px;
+  background: linear-gradient(90deg, #500778, #bb16a3);
+  transition: width 0.3s ease; z-index: 100;
+}
+.slide-counter {
+  position: fixed; bottom: 1.5rem; right: 2rem;
+  font-size: 0.8rem; font-weight: 500; color: #500778;
+  background: rgba(238,218,234,0.85);
+  padding: 0.25rem 0.6rem; border-radius: 0.25rem; z-index: 100;
+}
+.nav-hint {
+  position: fixed; bottom: 1.5rem; left: 2rem;
+  font-size: 0.75rem; color: #A0A0B0; z-index: 100;
+}
+.watermark-logo {
+  position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%);
+  height: 20px; z-index: 100; pointer-events: none;
+}
+
+/* --- Code --- */
+code {
+  font-family: 'JetBrains Mono', monospace;
+  background: #EEDAEA; color: #500778;
+  padding: 0.15rem 0.4rem; border-radius: 0.25rem; font-size: 0.85em;
+}
+.bg-swivel-purple code { background: rgba(255,255,255,0.15); color: #EEDAEA; }
+pre code {
+  display: block; padding: 1.25rem; border-radius: 0.5rem;
+  overflow-x: auto; font-size: 0.8rem; line-height: 1.6;
+}
+
+/* --- Dark slide overrides --- */
+.bg-swivel-purple .text-swivel-pink { color: #ffffff !important; }
+.bg-swivel-purple i[data-lucide] { color: #d42ebb !important; }
+
+/* --- Icon Cards --- */
+.icon-card {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.75rem 1rem; background: white;
+  border-radius: 0.5rem; border: 1px solid #EEDAEA;
+  box-shadow: 0 2px 8px rgba(80,7,120,0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.icon-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(80,7,120,0.12);
+}
+.icon-card i { color: #bb16a3; flex-shrink: 0; }
+
+/* --- Bullet List --- */
+.bullet-list li {
+  position: relative; padding-left: 1.5rem; margin-bottom: 0.75rem;
+}
+.bullet-list li::before {
+  content: ''; position: absolute; left: 0; top: 0.6rem;
+  width: 8px; height: 8px; background: #bb16a3; border-radius: 50%;
+}
+
+/* --- Decorative Elements --- */
+.deco-circle {
+  position: absolute; border-radius: 50%; opacity: 0.15;
+  background: linear-gradient(135deg, #500778, #bb16a3);
+}
+.deco-stripe-circle {
+  position: absolute; border-radius: 50%; opacity: 0.2;
+  background: repeating-linear-gradient(45deg, #bb16a3, #bb16a3 4px, transparent 4px, transparent 12px);
+}
+.deco-dots {
+  position: absolute; opacity: 0.1;
+  background-image: radial-gradient(#500778 2px, transparent 2px);
+  background-size: 24px 24px;
+}
+
+/* --- Animations --- */
+.slide.active .anim-fade-up { animation: fadeUp 0.6s ease forwards; }
+.slide.active .anim-fade-up-delay { animation: fadeUp 0.6s 0.2s ease forwards; opacity: 0; }
+.slide.active .anim-fade-up-delay-2 { animation: fadeUp 0.6s 0.4s ease forwards; opacity: 0; }
+.slide.active .anim-fade-up-delay-3 { animation: fadeUp 0.6s 0.6s ease forwards; opacity: 0; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide.active .anim-scale { animation: scaleIn 0.5s 0.3s ease forwards; opacity: 0; }
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Card stagger */
+.slide.active .icon-card:nth-child(1) { animation: slideInLeft 0.5s 0.1s ease forwards; opacity: 0; }
+.slide.active .icon-card:nth-child(2) { animation: slideInLeft 0.5s 0.2s ease forwards; opacity: 0; }
+.slide.active .icon-card:nth-child(3) { animation: slideInLeft 0.5s 0.3s ease forwards; opacity: 0; }
+.slide.active .icon-card:nth-child(4) { animation: slideInLeft 0.5s 0.4s ease forwards; opacity: 0; }
+.slide.active .icon-card:nth-child(5) { animation: slideInLeft 0.5s 0.5s ease forwards; opacity: 0; }
+.slide.active .icon-card:nth-child(6) { animation: slideInLeft 0.5s 0.6s ease forwards; opacity: 0; }
+.slide.active .icon-card:nth-child(7) { animation: slideInLeft 0.5s 0.7s ease forwards; opacity: 0; }
+.slide.active .icon-card:nth-child(8) { animation: slideInLeft 0.5s 0.8s ease forwards; opacity: 0; }
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Floating decorations */
+.float-slow { animation: floatSlow 6s ease-in-out infinite; }
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.float-medium { animation: floatMedium 4s ease-in-out infinite; }
+@keyframes floatMedium {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* --- Screenshots and headshot --- */
+.shot { border-radius: 12px; overflow: hidden; background: #fff; border: 1px solid #EEDAEA; box-shadow: 0 18px 40px rgba(80,7,120,0.18); }
+.shot-bar { display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: #F7F0F5; border-bottom: 1px solid #EEDAEA; }
+.shot-bar span { width: 10px; height: 10px; border-radius: 50%; background: #d9c3d6; }
+.shot-bar em { margin-left: 10px; font-style: normal; font-size: 12px; color: #4A4A5A; background: #fff; border-radius: 6px; padding: 2px 10px; flex: 1; }
+.shot img { display: block; width: 100%; height: auto; }
+.avatar { width: 280px; height: 280px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 6px #EEDAEA, 0 18px 40px rgba(80,7,120,0.25); }
