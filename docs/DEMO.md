@@ -3,7 +3,7 @@
 Hackerboard is built live in a fresh Claude session by pasting the prompts below, in order. Each prompt builds one slice of the app; the finished version is on `main`.
 
 ## Rules for the session
-- Never build on `main`. Every run starts on a new branch from the `demo-start-2` tag, named `demo-<MMDD-HHMM>`.
+- Never build on `main`. Every run starts on a new branch from the `demo-start` tag, named `demo-<MMDD-HHMM>`.
 - Any branch named `demo*` (or `rehearsal*`) deploys by itself on push to its own Worker (`hackerboard-<branch>`) and its own database. Nothing touches `main`'s board.
 - Claude commits and pushes only when a prompt says so.
 - If a step goes sideways, take the finished app: `git checkout main -- .` then commit, or just show the `main` deployment (https://hackerboard.zaquariah.workers.dev).
@@ -16,7 +16,7 @@ Hackerboard is built live in a fresh Claude session by pasting the prompts below
 5. Have the `main` URL ready as the fallback for the QR code.
 
 ## After the talk
-- Delete the demo branch locally and on GitHub; the `cleanup.yml` workflow deletes its Worker and database.
+- Run prompt 9 to delete the demo branch locally and on GitHub; the `cleanup.yml` workflow then deletes its Worker and database. In the Actions list that run is labelled `main`, because GitHub runs delete events on the default branch; it only removes the deleted branch's deployment.
 - Wipe `main`'s board if you want it empty (**Wipe board** workflow on `main`).
 
 ## The prompts
@@ -25,7 +25,7 @@ Hackerboard is built live in a fresh Claude session by pasting the prompts below
 ```
 We're doing the live Hackerboard demo. Read CLAUDE.md, docs/DEMO.md, docs/hackerboard/DESIGN.md and docs/hackerboard/IMPLEMENTATION-NOTES.md first.
 
-Don't work on main. Create a new branch from the demo-start-2 tag named demo-<MMDD-HHMM> (use the current date and time), run pnpm install, then run typecheck, test and build and confirm they pass.
+Don't work on main. Create a new branch from the demo-start tag named demo-<MMDD-HHMM> (use the current date and time), run pnpm install, then run typecheck, test and build and confirm they pass.
 
 Then tell me, in a few bullets: the branch name, what already exists in the repo, and what we still need to build. Don't write any code and don't commit.
 ```
@@ -123,6 +123,11 @@ Verify with pnpm run cf:dev: add 20 entries, then 50, then a 51st, and confirm n
 ### 8. Final ship
 ```
 Commit everything on this branch with a clear message, push it, and watch the GitHub Action until it finishes. Then give me the live URL, and run git diff main --stat to tell me how far this branch is from main.
+```
+
+### 9. Tear down
+```
+Tear down this demo. First list the remote branches and tell me which demo*/rehearsal* branch you plan to delete (the one we've been working on). Wait for my OK before deleting anything. Never touch main or any tag. Then follow the teardown steps in CLAUDE.md, watch the cleanup run, confirm the branch URL returns 404, and report what was deleted and what failed.
 ```
 
 ## If you only have a few minutes
