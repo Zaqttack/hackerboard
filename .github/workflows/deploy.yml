@@ -63,14 +63,12 @@ jobs:
           MAIN_SITE_KEY: ${{ vars.VITE_TURNSTILE_SITE_KEY }}
           MAIN_SECRET: ${{ secrets.TURNSTILE_SECRET }}
         run: |
-          if [ "$GITHUB_REF_NAME" = "main" ]; then
-            if [ -n "$MAIN_SITE_KEY" ] && [ -n "$MAIN_SECRET" ]; then
-              SITE="$MAIN_SITE_KEY"
-              SECRET="$MAIN_SECRET"
-            else
-              SITE=""
-              SECRET=""
-            fi
+          if [ -n "$MAIN_SITE_KEY" ] && [ -n "$MAIN_SECRET" ]; then
+            SITE="$MAIN_SITE_KEY"
+            SECRET="$MAIN_SECRET"
+          elif [ "$GITHUB_REF_NAME" = "main" ]; then
+            SITE=""
+            SECRET=""
           else
             SITE="1x00000000000000000000AA"
             SECRET="1x0000000000000000000000000000000AA"

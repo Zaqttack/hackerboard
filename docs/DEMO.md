@@ -3,16 +3,17 @@
 Hackerboard is built live in a fresh Claude session by pasting the prompts below, in order. Each prompt builds one slice of the app; the finished version is on `main`.
 
 ## Rules for the session
-- Never build on `main`. Every run starts on a new branch from the `demo-start` tag, named `demo-<MMDD-HHMM>`.
+- Never build on `main`. Every run starts on a new branch from the `demo-start-2` tag, named `demo-<MMDD-HHMM>`.
 - Any branch named `demo*` (or `rehearsal*`) deploys by itself on push to its own Worker (`hackerboard-<branch>`) and its own database. Nothing touches `main`'s board.
 - Claude commits and pushes only when a prompt says so.
 - If a step goes sideways, take the finished app: `git checkout main -- .` then commit, or just show the `main` deployment (https://hackerboard.zaquariah.workers.dev).
 
 ## Before the talk
 1. Confirm `main` is deployed and its board is empty (run the **Wipe board** workflow on `main`, or use `/admin`).
-2. Confirm the GitHub secrets exist: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ADMIN_KEY` (a long passphrase), `TURNSTILE_SECRET`, and the variable `VITE_TURNSTILE_SITE_KEY`.
-3. Open VS Code on a clean checkout (`git fetch --tags`, `git status` clean) and start a new Claude session. Use the model you rehearsed with.
-4. Have the `main` URL ready as the fallback for the QR code.
+2. In the Cloudflare Turnstile widget, make sure the hostname `zaquariah.workers.dev` is listed so every demo branch URL is allowed.
+3. Confirm the GitHub secrets exist: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ADMIN_KEY` (a long passphrase), `TURNSTILE_SECRET`, and the variable `VITE_TURNSTILE_SITE_KEY`.
+4. Open VS Code on a clean checkout (`git fetch --tags`, `git status` clean) and start a new Claude session. Use the model you rehearsed with.
+5. Have the `main` URL ready as the fallback for the QR code.
 
 ## After the talk
 - Delete the demo branch locally and on GitHub; the `cleanup.yml` workflow deletes its Worker and database.
@@ -24,7 +25,7 @@ Hackerboard is built live in a fresh Claude session by pasting the prompts below
 ```
 We're doing the live Hackerboard demo. Read CLAUDE.md, docs/DEMO.md, docs/hackerboard/DESIGN.md and docs/hackerboard/IMPLEMENTATION-NOTES.md first.
 
-Don't work on main. Create a new branch from the demo-start tag named demo-<MMDD-HHMM> (use the current date and time), run pnpm install, then run typecheck, test and build and confirm they pass.
+Don't work on main. Create a new branch from the demo-start-2 tag named demo-<MMDD-HHMM> (use the current date and time), run pnpm install, then run typecheck, test and build and confirm they pass.
 
 Then tell me, in a few bullets: the branch name, what already exists in the repo, and what we still need to build. Don't write any code and don't commit.
 ```

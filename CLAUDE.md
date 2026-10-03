@@ -20,15 +20,15 @@ Vite, React 19, TypeScript (strict), Tailwind v4, react-router-dom. One Cloudfla
 Every branch matching `main`, `demo*` or `rehearsal*` is a deployment. `.github/workflows/deploy.yml` names the Worker and D1 database from the branch (`hackerboard` on main, `hackerboard-<branch>` elsewhere) and rewrites `wrangler.jsonc` in CI. Do not hand-edit the placeholder `database_id`. Deploy only through GitHub Actions. Never commit secrets: `ADMIN_KEY` and Cloudflare credentials live in GitHub secrets.
 
 ## Demo mode
-This repo is used for a live talk (see `docs/DEMO.md`). The finished app is `main`; the demo rebuilds it from the `demo-start` tag by pasting the prompts in `docs/DEMO.md`.
-- Never build demo work on `main`. If the user asks to start or continue the demo, or pastes a prompt from `docs/DEMO.md`, and the current branch is not `demo*` or `rehearsal*`, first create a new branch from the tag: `git checkout -b demo-<MMDD-HHMM> demo-start` (use the current date and time), unless the user names a branch. Fetch tags first if `demo-start` is missing.
+This repo is used for a live talk (see `docs/DEMO.md`). The finished app is `main`; the demo rebuilds it from the `demo-start-2` tag by pasting the prompts in `docs/DEMO.md`.
+- Never build demo work on `main`. If the user asks to start or continue the demo, or pastes a prompt from `docs/DEMO.md`, and the current branch is not `demo*` or `rehearsal*`, first create a new branch from the tag: `git checkout -b demo-<MMDD-HHMM> demo-start-2` (use the current date and time), unless the user names a branch. Fetch tags first if `demo-start-2` is missing.
 - A `demo*`/`rehearsal*` branch deploys itself when pushed. Commit and push only when the prompt or the user asks for it.
 - If something is badly stuck, the finished version is available with `git checkout main -- .`.
 - For normal work on `main` itself (fixes, docs), ignore this section.
 
 ## Tearing down a branch deployment
 When the user asks to clean up, delete or tear down a branch, a demo, or "the test deployments":
-- Only `demo*` and `rehearsal*` branches. Never `main`, never tags (especially `demo-start`). If asked to remove `main` or anything else, stop and say it is a manual dashboard job.
+- Only `demo*` and `rehearsal*` branches. Never `main`, never tags (especially `demo-start` and `demo-start-2`). If asked to remove `main` or anything else, stop and say it is a manual dashboard job.
 - Find the targets with `git ls-remote --heads origin`. For "everything" or "all test branches", list every `demo*` and `rehearsal*` branch and get the user's confirmation of that list before deleting anything.
 - If the current branch is a target, check `git status` is clean (or ask), then switch to `main` first. Never delete a local branch that has unpushed commits without asking.
 - Delete each remote branch with `git push origin --delete <branch>` (never force). The `cleanup.yml` workflow then deletes that branch's Worker and D1 database. Run `gh run watch` on the latest "Clean up deleted branch" run and confirm it passed.

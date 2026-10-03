@@ -35,7 +35,7 @@ The board shows the 50 newest people. Nobody is turned away: when a 51st person 
    - `CLOUDFLARE_API_TOKEN`
    - `CLOUDFLARE_ACCOUNT_ID`
    - `ADMIN_KEY`, the passphrase for `/admin` (use a long one)
-4. Optional, bot protection: create a Turnstile widget for your `workers.dev` hostname, then add the secret `TURNSTILE_SECRET` and the repository variable `VITE_TURNSTILE_SITE_KEY`. Without them `main` runs with no captcha. Every other branch uses Cloudflare's always-pass test keys.
+4. Optional, bot protection: create a Turnstile widget for your `workers.dev` hostname, then add the secret `TURNSTILE_SECRET` and the repository variable `VITE_TURNSTILE_SITE_KEY`. Add your account's workers.dev hostname (for example `yourname.workers.dev`) to the widget so every branch deployment is covered. Without the secret and variable, `main` runs with no captcha and other branches use Cloudflare's always-pass test keys (which show a "For testing only" banner).
 5. Push to `main`, or run the **Test & Deploy** workflow from the Actions tab.
 
 The workflow creates the D1 database, applies migrations, deploys the Worker, sets the secrets and smoke-tests it. Nothing else to configure.
@@ -54,7 +54,7 @@ Each deployment has its own database, so test data never touches `main`.
 
 ## Run the demo
 
-The talk rebuilds this app live from the `demo-start` tag by pasting prompts in order. See [docs/DEMO.md](docs/DEMO.md) for the runbook and the prompts. Design spec: [docs/hackerboard/DESIGN.md](docs/hackerboard/DESIGN.md), with notes on where the finished app differs and the traps to avoid in [docs/hackerboard/IMPLEMENTATION-NOTES.md](docs/hackerboard/IMPLEMENTATION-NOTES.md).
+The talk rebuilds this app live from the `demo-start-2` tag by pasting prompts in order. See [docs/DEMO.md](docs/DEMO.md) for the runbook and the prompts. Design spec: [docs/hackerboard/DESIGN.md](docs/hackerboard/DESIGN.md), with notes on where the finished app differs and the traps to avoid in [docs/hackerboard/IMPLEMENTATION-NOTES.md](docs/hackerboard/IMPLEMENTATION-NOTES.md).
 
 ## Security
 
