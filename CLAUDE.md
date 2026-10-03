@@ -44,7 +44,7 @@ When the user asks to clean up, delete or tear down a branch, a demo, or "the te
 - Render user text only as React text nodes. Never `dangerouslySetInnerHTML`, `innerHTML` or URL building from names.
 - Every POST requires `content-type: application/json` and a same-origin `Origin`/`Sec-Fetch-Site`. Cap request bodies. Never trust a client-supplied id for anything but lookup.
 - Admin: constant-time passphrase compare, per-IP lockout after repeated failures, passphrase only from the `ADMIN_KEY` Worker secret.
-- Public writes are throttled (flood guard) and, on `main`, require a Turnstile token verified server-side.
+- Public writes are throttled (flood guard) and, wherever `TURNSTILE_SECRET` is set (every deployed branch), require a Turnstile token verified server-side.
 - Security headers and the CSP live in `public/_headers`. Any new external origin (script, frame, connect, font, image) must be added there deliberately.
 - Errors return generic JSON; never leak stack traces, SQL or secrets. No secrets in the repo or the client bundle (the Turnstile site key is public by design).
 - Pin third-party GitHub Actions that receive credentials to a commit SHA and keep workflow `permissions` at the minimum.

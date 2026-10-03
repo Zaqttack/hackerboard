@@ -38,7 +38,7 @@ Implemented and verified locally (2026-10-03):
 - Server-side allowlist validation of names (see CLAUDE.md "Security"); bound parameters on every D1 query; user text rendered only as React text.
 - POSTs must be JSON and same-origin (Origin and Sec-Fetch-Site checks); request bodies capped; generic 500 handler.
 - Admin: constant-time passphrase compare, per-IP lockout (10 failures per 10 minutes, `admin_failures` table, migration 0002), a deploy warning when `ADMIN_KEY` is under 12 characters.
-- Flood guard on joins (at most 60 per 30 seconds, 429 beyond); Turnstile on `main`.
+- Flood guard on joins (at most 60 per 30 seconds, 429 beyond); Turnstile on every deployed branch when its keys are set.
 - `public/_headers`: CSP (self plus Turnstile only), `frame-ancestors 'none'`, nosniff, no-referrer, permissions policy, COOP; `/admin` is `noindex` and disallowed in `robots.txt`.
 - Workflows: minimal `permissions`, `cloudflare/wrangler-action` pinned to a commit SHA. `pnpm audit` clean.
 - Known limit: the lockout is per IP, so someone on the same venue network hammering `/admin` could lock the owner out for ten minutes (the board itself is unaffected).
