@@ -4,17 +4,20 @@ import { BaublePreview } from "./BaublePreview.tsx";
 import { Pushpin } from "./Pushpin.tsx";
 import { TurnstileSlot } from "./TurnstileSlot.tsx";
 
-export type JoinStatus = "idle" | "submitting" | "rejected" | "network";
+export type JoinStatus = "idle" | "submitting" | "rejected" | "network" | "unverified";
 
 type JoinFormProps = {
   name: string;
   status: JoinStatus;
   emptyError: boolean;
+  verified: boolean;
+  resetKey: number;
+  onToken: (token: string | null) => void;
   onNameChange: (name: string) => void;
   onSubmit: () => void;
 };
 
-export function JoinForm({ name, status, emptyError, onNameChange, onSubmit }: JoinFormProps) {
+export function JoinForm({ name, status, emptyError, verified, resetKey, onToken, onNameChange, onSubmit }: JoinFormProps) {
   const busy = status === "submitting";
   const hasName = name.trim().length > 0;
   const atLimit = name.length >= NAME_MAX;
@@ -23,14 +26,13 @@ export function JoinForm({ name, status, emptyError, onNameChange, onSubmit }: J
     : status === "rejected"
       ? "That name didn't get past the bouncer. Try a different one."
       : null;
-  const enabled = hasName && status !== "rejected";
+  const enabled = hasName && verified && status !== "rejected";
   const label = busy ? "Pinning you up…" : status === "network" ? "Try again" : "Pin me to the board";
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
     if (busy) return;
-    if (!hasName) return onSubmit();
-    if (enabled) onSubmit();
+    if (!hasName || enabled) onSubmit();
   };
 
   return (
@@ -101,7 +103,14 @@ export function JoinForm({ name, status, emptyError, onNameChange, onSubmit }: J
         <div className="text-ink-soft text-[15px] font-medium">Your animal is a surprise.</div>
       </div>
 
-      <TurnstileSlot />
+      <div className="flex flex-col gap-2">
+        <TurnstileSlot onToken={onToken} resetKey={resetKey} />
+        {status === "unverified" && (
+          <div role="alert" className="text-string text-[17px] leading-[1.3] font-bold">
+            Couldn't verify you're human. Give it another try.
+          </div>
+        )}
+      </div>
 
       <button
         type="submit"

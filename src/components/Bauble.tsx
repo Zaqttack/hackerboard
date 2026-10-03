@@ -19,14 +19,15 @@ type BaubleProps = {
   scale?: number;
   rotation?: number;
   isNew?: boolean;
+  leaving?: boolean;
   ref?: Ref<HTMLDivElement>;
 };
 
-export function Bauble({ name, emoji, fill, x = 0, y = 0, scale = 1, rotation = 0, isNew = false, ref }: BaubleProps) {
+export function Bauble({ name, emoji, fill, x = 0, y = 0, scale = 1, rotation = 0, isNew = false, leaving = false, ref }: BaubleProps) {
   return (
     <div
       ref={ref}
-      className={`absolute top-0 left-0 w-max origin-[44px_44px] ${isNew ? "arrive-drop z-40" : "z-20"}`}
+      className={`absolute top-0 left-0 w-max origin-[44px_44px] ${isNew ? "arrive-drop z-40" : "z-20"} ${leaving ? "bauble-leave" : ""}`}
       style={{ transform: `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg) scale(${scale})` }}
     >
       {isNew && (

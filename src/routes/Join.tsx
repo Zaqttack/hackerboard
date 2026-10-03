@@ -1,41 +1,65 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { JoinForm, type JoinStatus } from "../components/JoinForm.tsx";
 import { JoinResult } from "../components/JoinResult.tsx";
 import { Tape } from "../components/Tape.tsx";
+import { fetchMe, signUp } from "../lib/api.ts";
 import { NAME_MAX } from "../shared/constants.ts";
+import type { Entry } from "../shared/types.ts";
 
-type Preview = { name: string; status: JoinStatus; result: "success" | "already" | null; empty: boolean };
+const STORAGE_KEY = "hackerboard:entry";
 
-function devPreview(): Preview {
-  const base: Preview = { name: "", status: "idle", result: null, empty: false };
-  if (!import.meta.env.DEV) return base;
-  switch (new URLSearchParams(window.location.search).get("state")) {
-    case "typing":
-      return { ...base, name: "Grace H" };
-    case "empty":
-      return { ...base, empty: true };
-    case "long":
-      return { ...base, name: "Bartholomew Castillo" };
-    case "submitting":
-      return { ...base, name: "Grace H", status: "submitting" };
-    case "rejected":
-      return { ...base, name: "B0ss Hacker 69", status: "rejected" };
-    case "network":
-      return { ...base, name: "Grace H", status: "network" };
-    case "success":
-      return { ...base, name: "Grace H", result: "success" };
-    case "already":
-      return { ...base, name: "Grace H", result: "already" };
-    default:
-      return base;
+function storedId(): string | null {
+  try {
+    return localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return null;
   }
 }
 
+function remember(id: string | null) {
+  try {
+    if (id) localStorage.setItem(STORAGE_KEY, id);
+    else localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // storage can be blocked; the join still works
+  }
+}
+
+type Phase =
+  | { kind: "checking" }
+  | { kind: "form" }
+  | { kind: "result"; result: "success" | "already"; entry: Entry };
+
 export function Join() {
-  const [initial] = useState(devPreview);
-  const [name, setName] = useState(initial.name);
-  const [status, setStatus] = useState(initial.status);
-  const [emptyError, setEmptyError] = useState(initial.empty);
+  const [phase, setPhase] = useState<Phase>(() => (storedId() ? { kind: "checking" } : { kind: "form" }));
+  const [name, setName] = useState("");
+  const [status, setStatus] = useState<JoinStatus>("idle");
+  const [emptyError, setEmptyError] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [resetKey, setResetKey] = useState(0);
+
+  useEffect(() => {
+    const id = storedId();
+    if (!id) return;
+    let cancelled = false;
+    fetchMe(id).then(
+      (me) => {
+        if (cancelled) return;
+        if (me?.onBoard) {
+          setPhase({ kind: "result", result: "already", entry: me });
+        } else {
+          remember(null);
+          setPhase({ kind: "form" });
+        }
+      },
+      () => {
+        if (!cancelled) setPhase({ kind: "form" });
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const onNameChange = (value: string) => {
     setName(value.slice(0, NAME_MAX));
@@ -43,8 +67,33 @@ export function Join() {
     if (status === "rejected") setStatus("idle");
   };
 
-  const onSubmit = () => {
-    if (!name.trim()) setEmptyError(true);
+  const onSubmit = async () => {
+    if (!name.trim()) {
+      setEmptyError(true);
+      return;
+    }
+    if (token === null || status === "submitting") return;
+
+    setEmptyError(false);
+    setStatus("submitting");
+    const outcome = await signUp(name, token);
+    switch (outcome.kind) {
+      case "ok":
+        remember(outcome.entry.id);
+        setPhase({ kind: "result", result: "success", entry: outcome.entry });
+        return;
+      case "invalid":
+        setEmptyError(true);
+        setStatus("idle");
+        return;
+      case "unverified":
+        setToken(null);
+        setResetKey((k) => k + 1);
+        setStatus("unverified");
+        return;
+      default:
+        setStatus(outcome.kind === "rejected" ? "rejected" : "network");
+    }
   };
 
   return (
@@ -56,13 +105,17 @@ export function Join() {
           </Tape>
           <div className="font-display text-[60px] leading-none">Hackerboard</div>
         </header>
-        {initial.result ? (
-          <JoinResult kind={initial.result} name={name} emoji="🐼" fill="tape" />
-        ) : (
+        {phase.kind === "result" && (
+          <JoinResult kind={phase.result} name={phase.entry.name} emoji={phase.entry.emoji} fill={phase.entry.fill} />
+        )}
+        {phase.kind === "form" && (
           <JoinForm
             name={name}
             status={status}
             emptyError={emptyError}
+            verified={token !== null}
+            resetKey={resetKey}
+            onToken={setToken}
             onNameChange={onNameChange}
             onSubmit={onSubmit}
           />

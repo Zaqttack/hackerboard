@@ -104,6 +104,11 @@
   to { translate: 0 0; opacity: 1; }
 }
 
+@keyframes bauble-fade {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
 @keyframes bauble-squash {
   from { scale: 1.18 0.82; }
   to { scale: 1 1; }
@@ -138,6 +143,7 @@
 
 @layer components {
   .arrive-drop { animation: bauble-drop 260ms var(--ease-fall) both; }
+  .bauble-leave { pointer-events: none; animation: bauble-fade 400ms ease-out forwards; }
   .arrive-squash { transform-origin: 50% 100%; animation: bauble-squash 220ms var(--ease-spring) 260ms; }
   .arrive-pin { animation: pin-push 160ms var(--ease-spring) 300ms; }
   .ring-burst { opacity: 0; animation: ring-burst 650ms var(--ease-out) var(--ring-delay, 300ms) both; }
