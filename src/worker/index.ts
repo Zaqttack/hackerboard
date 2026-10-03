@@ -6,6 +6,7 @@ import { checkName } from "./validate.ts";
 
 interface Env {
   DB: D1Database;
+  ASSETS: Fetcher;
   ADMIN_KEY?: string;
   TURNSTILE_SECRET?: string;
 }
@@ -195,9 +196,23 @@ async function route(request: Request, env: Env): Promise<Response> {
   }
 }
 
+const LOCAL_FRAME_ANCESTORS = "frame-ancestors http://localhost:* http://127.0.0.1:*";
+
+async function serveBoard(request: Request, env: Env): Promise<Response> {
+  const response = await env.ASSETS.fetch(request);
+  const headers = new Headers(response.headers);
+  const csp = headers.get("content-security-policy");
+  if (csp) {
+    headers.set("content-security-policy", csp.replace(/frame-ancestors [^;]+/, LOCAL_FRAME_ANCESTORS));
+  }
+  headers.delete("x-frame-options");
+  return new Response(response.body, { status: response.status, headers });
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     try {
+      if (new URL(request.url).pathname === "/") return await serveBoard(request, env);
       return await route(request, env);
     } catch (error) {
       console.error(error);
