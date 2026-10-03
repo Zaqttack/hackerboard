@@ -3,6 +3,9 @@ name: Wipe board
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   wipe:
     name: Delete all entries

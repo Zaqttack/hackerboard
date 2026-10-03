@@ -1,21 +1,22 @@
 import { useState } from "react";
 import { AdminPanel, type AdminStatus } from "../components/AdminPanel.tsx";
-import { type AdminStats, adminStats, adminWipe, NetworkError } from "../lib/api.ts";
+import { type AdminStats, adminStats, adminWipe, LockedOutError, NetworkError } from "../lib/api.ts";
 
 export function Admin() {
   const [status, setStatus] = useState<AdminStatus>("locked");
   const [passphrase, setPassphrase] = useState("");
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [busy, setBusy] = useState(false);
-  const [offline, setOffline] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const run = async (action: () => Promise<void>) => {
     setBusy(true);
-    setOffline(false);
+    setNotice(null);
     try {
       await action();
     } catch (error) {
-      if (error instanceof NetworkError) setOffline(true);
+      if (error instanceof NetworkError) setNotice("Couldn't reach the board. Try again.");
+      else if (error instanceof LockedOutError) setNotice("Too many wrong passphrases. Wait ten minutes and try again.");
       else throw error;
     } finally {
       setBusy(false);
@@ -52,7 +53,7 @@ export function Admin() {
         passphrase={passphrase}
         stats={stats}
         busy={busy}
-        offline={offline}
+        notice={notice}
         onPassphraseChange={setPassphrase}
         onUnlock={unlock}
         onAskWipe={() => setStatus("confirm")}

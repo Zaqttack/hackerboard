@@ -2,6 +2,8 @@ import type { Entry } from "../shared/types.ts";
 
 export class NetworkError extends Error {}
 
+export class LockedOutError extends Error {}
+
 async function call(path: string, init?: RequestInit): Promise<Response> {
   try {
     return await fetch(path, init);
@@ -54,11 +56,13 @@ export type AdminStats = { onBoard: number; recruited: number; entries: Recruit[
 export async function adminStats(passphrase: string): Promise<AdminStats | null> {
   const response = await post("/api/admin/stats", { passphrase });
   if (response.status === 401) return null;
+  if (response.status === 429) throw new LockedOutError();
   if (!response.ok) throw new NetworkError();
   return response.json();
 }
 
 export async function adminWipe(passphrase: string): Promise<void> {
   const response = await post("/api/admin/wipe", { passphrase });
+  if (response.status === 429) throw new LockedOutError();
   if (!response.ok) throw new NetworkError();
 }

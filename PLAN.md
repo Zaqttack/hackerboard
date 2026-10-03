@@ -33,6 +33,18 @@ Vite, React 19, TypeScript, Tailwind v4, react-router-dom, matter-js, `qrcode.re
 - Poll failure on the board keeps the last state silently.
 - Unknown URLs render the board.
 
+## Security
+Implemented and verified locally (2026-10-03):
+- Server-side allowlist validation of names (see CLAUDE.md "Security"); bound parameters on every D1 query; user text rendered only as React text.
+- POSTs must be JSON and same-origin (Origin and Sec-Fetch-Site checks); request bodies capped; generic 500 handler.
+- Admin: constant-time passphrase compare, per-IP lockout (10 failures per 10 minutes, `admin_failures` table, migration 0002), a deploy warning when `ADMIN_KEY` is under 12 characters.
+- Flood guard on joins (at most 60 per 30 seconds, 429 beyond); Turnstile on `main`.
+- `public/_headers`: CSP (self plus Turnstile only), `frame-ancestors 'none'`, nosniff, no-referrer, permissions policy, COOP; `/admin` is `noindex` and disallowed in `robots.txt`.
+- Workflows: minimal `permissions`, `cloudflare/wrangler-action` pinned to a commit SHA. `pnpm audit` clean.
+- Known limit: the lockout is per IP, so someone on the same venue network hammering `/admin` could lock the owner out for ten minutes (the board itself is unaffected).
+
+**These requirements must be in the act 3 prompt** (the one that builds the Worker, `/join` and `/admin`). Copy the "Security" section of CLAUDE.md into `prompts/act-3.md` and tell Claude to write tests for the validation, including injection and markup payloads.
+
 ## Data
 D1 table `entries(id, name, emoji, fill, tied_to, created_at)` in `migrations/0001_entries.sql`. Each branch deployment has its own database.
 
@@ -47,7 +59,7 @@ D1 table `entries(id, name, emoji, fill, tied_to, created_at)` in `migrations/00
 ## Verified on `main`
 - Production: empty state; two recruits joining through the real Turnstile widget; Turnstile enforced server-side (403 without a token); deploy and wipe workflows.
 - Local browser checks: first load with 50 (0 overlaps from the first frame), incremental fill to 50 and the tier shrink, the 51st-join fall, a burst of 20 simultaneous joins on a full board, reduced motion (no drift, strings drawn), join error states (network, Turnstile 403, rejected name not echoed), the bumped-off phone returning to the form, admin offline error, admin list with OFF markers.
-- 17 unit tests: name validation and blocklist, fill and tie picking, elapsed formatting.
+- 22 unit tests: name validation (allowlist, markup and SQL payloads, Unicode edge cases, blocklist), fill and tie picking, elapsed formatting.
 
 ## Not verified / open
 - Admin with the real passphrase on production (only the owner can).

@@ -39,6 +39,45 @@ describe("checkName", () => {
     expect(checkName("Sh1t Head")).toEqual({ ok: false, reason: "rejected" });
   });
 
+  it("accepts names from other scripts and with accents or emoji", () => {
+    for (const name of ["李雷", "María-José", "O'Brien", "Zoë", "Ольга", "Sam 🦊"]) {
+      expect(checkName(name)).toEqual({ ok: true, name });
+    }
+  });
+
+  it("rejects markup, script, template and SQL-shaped input", () => {
+    for (const name of [
+      "<script>alert(1)</script>",
+      "<img src=x onerror=alert(1)>",
+      "{{7*7}}",
+      "${process.env}",
+      "Robert'); DROP TABLE entries;--",
+      '" OR 1=1 --',
+      "a\\b",
+      "javascript:alert(1)",
+      "a/b",
+    ]) {
+      expect(checkName(name).ok).toBe(false);
+    }
+  });
+
+  it("rejects short markup and SQL fragments by character, not just length", () => {
+    for (const name of ["<b>", "a;b", "{x}", "a<b", "a=b"]) {
+      expect(checkName(name)).toEqual({ ok: false, reason: "rejected" });
+    }
+  });
+
+  it("strips bidi overrides, private-use characters and long runs of combining marks", () => {
+    expect(checkName("\u202eGrace")).toEqual({ ok: true, name: "Grace" });
+    expect(checkName("Gr\ue000ace")).toEqual({ ok: true, name: "Grace" });
+    const zalgo = checkName("Z\u0300\u0301\u0302\u0303\u0304\u0305\u0306a");
+    expect(zalgo.ok && Array.from(zalgo.name).length).toBeLessThanOrEqual(5);
+  });
+
+  it("rejects absurdly long input without scanning it", () => {
+    expect(checkName("a".repeat(100_000))).toEqual({ ok: false, reason: "invalid" });
+  });
+
   it("does not flag innocent names that contain a bad substring", () => {
     for (const name of ["Scunthorpe", "Assad", "Hancock", "Cassandra", "Essex", "Class"]) {
       expect(checkName(name).ok).toBe(true);

@@ -5,6 +5,9 @@ on:
     branches: [main, "demo*", "rehearsal*"]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: deploy-${{ github.ref_name }}
   cancel-in-progress: true
@@ -83,7 +86,7 @@ jobs:
 
       - name: Deploy Worker
         id: deploy
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -93,6 +96,9 @@ jobs:
         env:
           ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
         run: |
+          if [ "${#ADMIN_KEY}" -lt 12 ]; then
+            echo "::warning::ADMIN_KEY is shorter than 12 characters. Use a long passphrase."
+          fi
           printf '%s' "$ADMIN_KEY" | pnpm exec wrangler secret put ADMIN_KEY
           if [ -n "$TURNSTILE_SECRET_VALUE" ]; then
             printf '%s' "$TURNSTILE_SECRET_VALUE" | pnpm exec wrangler secret put TURNSTILE_SECRET

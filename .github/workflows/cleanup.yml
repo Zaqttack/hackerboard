@@ -2,6 +2,9 @@ name: Clean up deleted branch
 
 on: delete
 
+permissions:
+  contents: read
+
 jobs:
   cleanup:
     name: Delete Worker and database

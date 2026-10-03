@@ -12,7 +12,7 @@ type AdminPanelProps = {
   passphrase: string;
   stats: AdminStats | null;
   busy: boolean;
-  offline: boolean;
+  notice: string | null;
   onPassphraseChange: (value: string) => void;
   onUnlock: () => void;
   onAskWipe: () => void;
@@ -43,7 +43,7 @@ function Stat({ label, children }: { label: string; children: ReactNode }) {
 }
 
 export function AdminPanel(props: AdminPanelProps) {
-  const { status, passphrase, stats, busy, offline, onPassphraseChange } = props;
+  const { status, passphrase, stats, busy, notice, onPassphraseChange } = props;
   const stamp = STAMPS[status];
 
   const unlock = (event: FormEvent) => {
@@ -59,9 +59,9 @@ export function AdminPanel(props: AdminPanelProps) {
       {stamp && <Stamp text={stamp} size={22} rotate={7} className="absolute top-[30px] right-[30px] px-3 py-1" />}
       <h1 className="font-display m-0 text-[72px] leading-[0.95] font-normal">Board control</h1>
 
-      {offline && (
+      {notice && (
         <div role="alert" className="text-string text-[17px] font-bold">
-          Couldn't reach the board. Try again.
+          {notice}
         </div>
       )}
 

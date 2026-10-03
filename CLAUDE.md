@@ -19,6 +19,17 @@ Vite, React 19, TypeScript (strict), Tailwind v4, react-router-dom. One Cloudfla
 ## Deploys
 Every branch matching `main`, `demo*` or `rehearsal*` is a deployment. `.github/workflows/deploy.yml` names the Worker and D1 database from the branch (`hackerboard` on main, `hackerboard-<branch>` elsewhere) and rewrites `wrangler.jsonc` in CI. Do not hand-edit the placeholder `database_id`. Deploy only through GitHub Actions. Never commit secrets: `ADMIN_KEY` and Cloudflare credentials live in GitHub secrets.
 
+## Security (non-negotiable, include in every prompt that touches the API or user input)
+- Validate all input on the server with an allowlist, never a denylist. Names: normalize NFC, strip control, format, private-use and unassigned characters, cap runs of combining marks, 1 to 20 code points, then allow only letters, numbers, marks, emoji, spaces and `._'’!?&#@+()*~-`. The client check is a convenience only.
+- Every D1 query uses bound parameters (`.bind()`). Never build SQL from input.
+- Render user text only as React text nodes. Never `dangerouslySetInnerHTML`, `innerHTML` or URL building from names.
+- Every POST requires `content-type: application/json` and a same-origin `Origin`/`Sec-Fetch-Site`. Cap request bodies. Never trust a client-supplied id for anything but lookup.
+- Admin: constant-time passphrase compare, per-IP lockout after repeated failures, passphrase only from the `ADMIN_KEY` Worker secret.
+- Public writes are throttled (flood guard) and, on `main`, require a Turnstile token verified server-side.
+- Security headers and the CSP live in `public/_headers`. Any new external origin (script, frame, connect, font, image) must be added there deliberately.
+- Errors return generic JSON; never leak stack traces, SQL or secrets. No secrets in the repo or the client bundle (the Turnstile site key is public by design).
+- Pin third-party GitHub Actions that receive credentials to a commit SHA and keep workflow `permissions` at the minimum.
+
 ## Conventions
 - Names: trim, collapse spaces, 1 to 20 characters, validated on the server as well as the client. Never echo a rejected name back.
 - The server assigns emoji, fill and `tied_to`.

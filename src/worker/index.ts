@@ -12,11 +12,19 @@ interface Env {
 
 const MAX_BODY = 2048;
 const LIST_LIMIT = 1000;
+const MAX_PASSPHRASE = 256;
+const SIGN_WINDOW_MS = 30_000;
+const SIGN_MAX_PER_WINDOW = 60;
+const ADMIN_WINDOW_MS = 10 * 60_000;
+const ADMIN_MAX_FAILURES = 10;
 
 const COLUMNS = "id, name, emoji, fill, tied_to AS tiedTo, created_at AS createdAt";
 
 function json(data: unknown, status = 200): Response {
-  return Response.json(data, { status, headers: { "cache-control": "no-store" } });
+  return Response.json(data, {
+    status,
+    headers: { "cache-control": "no-store", "x-content-type-options": "nosniff" },
+  });
 }
 
 async function readBody(request: Request): Promise<Record<string, unknown> | null> {
@@ -30,8 +38,49 @@ async function readBody(request: Request): Promise<Record<string, unknown> | nul
   }
 }
 
-function isAdmin(body: Record<string, unknown> | null, env: Env): boolean {
-  return !!env.ADMIN_KEY && typeof body?.passphrase === "string" && body.passphrase === env.ADMIN_KEY;
+async function digest(value: string): Promise<Uint8Array> {
+  return new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value)));
+}
+
+async function passphraseMatches(body: Record<string, unknown> | null, env: Env): Promise<boolean> {
+  const given = body?.passphrase;
+  if (!env.ADMIN_KEY || typeof given !== "string" || given.length > MAX_PASSPHRASE) return false;
+
+  const [a, b] = await Promise.all([digest(given), digest(env.ADMIN_KEY)]);
+  let difference = 0;
+  for (let i = 0; i < a.length; i++) difference |= a[i] ^ b[i];
+  return difference === 0;
+}
+
+async function adminDenied(request: Request, env: Env, body: Record<string, unknown> | null): Promise<Response | null> {
+  const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
+  const now = Date.now();
+
+  await env.DB.prepare("DELETE FROM admin_failures WHERE at < ?")
+    .bind(now - ADMIN_WINDOW_MS)
+    .run();
+  const failures = await env.DB.prepare("SELECT COUNT(*) AS n FROM admin_failures WHERE ip = ?")
+    .bind(ip)
+    .first<{ n: number }>();
+  if ((failures?.n ?? 0) >= ADMIN_MAX_FAILURES) return json({ error: "locked" }, 429);
+
+  if (await passphraseMatches(body, env)) return null;
+
+  await env.DB.prepare("INSERT INTO admin_failures (ip, at) VALUES (?, ?)").bind(ip, now).run();
+  return json({ error: "unauthorized" }, 401);
+}
+
+function rejectCrossSitePost(request: Request, url: URL): Response | null {
+  const origin = request.headers.get("origin");
+  if (origin && origin !== url.origin) return json({ error: "forbidden" }, 403);
+
+  const site = request.headers.get("sec-fetch-site");
+  if (site && site !== "same-origin" && site !== "none") return json({ error: "forbidden" }, 403);
+
+  if (!request.headers.get("content-type")?.toLowerCase().startsWith("application/json")) {
+    return json({ error: "unsupported" }, 415);
+  }
+  return null;
 }
 
 async function wall(env: Env): Promise<Response> {
@@ -50,11 +99,16 @@ async function sign(request: Request, env: Env): Promise<Response> {
   const checked = checkName(body.name);
   if (!checked.ok) return json({ error: checked.reason }, checked.reason === "invalid" ? 400 : 422);
 
+  const recent = await env.DB.prepare("SELECT COUNT(*) AS n FROM entries WHERE created_at > ?")
+    .bind(Date.now() - SIGN_WINDOW_MS)
+    .first<{ n: number }>();
+  if ((recent?.n ?? 0) >= SIGN_MAX_PER_WINDOW) return json({ error: "busy" }, 429);
+
   if (!(await verifyTurnstile(body.turnstileToken, env.TURNSTILE_SECRET))) {
     return json({ error: "turnstile" }, 403);
   }
 
-  const { results: recent } = await env.DB.prepare(
+  const { results: newest } = await env.DB.prepare(
     `SELECT ${COLUMNS} FROM entries ORDER BY created_at DESC LIMIT ?`,
   )
     .bind(MAX_RECRUITS)
@@ -64,8 +118,8 @@ async function sign(request: Request, env: Env): Promise<Response> {
     id: crypto.randomUUID(),
     name: checked.name,
     emoji: pickEmoji(),
-    fill: pickFill((recent[0]?.fill as Fill | undefined) ?? null),
-    tiedTo: pickTieTarget(recent),
+    fill: pickFill((newest[0]?.fill as Fill | undefined) ?? null),
+    tiedTo: pickTieTarget(newest),
     createdAt: Date.now(),
   };
 
@@ -92,7 +146,8 @@ async function me(url: URL, env: Env): Promise<Response> {
 }
 
 async function adminStats(request: Request, env: Env): Promise<Response> {
-  if (!isAdmin(await readBody(request), env)) return json({ error: "unauthorized" }, 401);
+  const denied = await adminDenied(request, env, await readBody(request));
+  if (denied) return denied;
 
   const row = await env.DB.prepare("SELECT COUNT(*) AS total FROM entries").first<{ total: number }>();
   const { results: entries } = await env.DB.prepare(
@@ -105,34 +160,48 @@ async function adminStats(request: Request, env: Env): Promise<Response> {
 }
 
 async function adminWipe(request: Request, env: Env): Promise<Response> {
-  if (!isAdmin(await readBody(request), env)) return json({ error: "unauthorized" }, 401);
+  const denied = await adminDenied(request, env, await readBody(request));
+  if (denied) return denied;
 
   await env.DB.prepare("DELETE FROM entries").run();
   return json({ ok: true });
 }
 
+async function route(request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url);
+
+  if (request.method === "POST") {
+    const rejected = rejectCrossSitePost(request, url);
+    if (rejected) return rejected;
+  }
+
+  switch (`${request.method} ${url.pathname}`) {
+    case "GET /api/health": {
+      const row = await env.DB.prepare("SELECT COUNT(*) AS n FROM entries").first<{ n: number }>();
+      return json({ ok: true, entries: row?.n ?? 0 });
+    }
+    case "GET /api/wall":
+      return wall(env);
+    case "POST /api/sign":
+      return sign(request, env);
+    case "GET /api/me":
+      return me(url, env);
+    case "POST /api/admin/stats":
+      return adminStats(request, env);
+    case "POST /api/admin/wipe":
+      return adminWipe(request, env);
+    default:
+      return json({ error: "not_found" }, 404);
+  }
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const url = new URL(request.url);
-    const route = `${request.method} ${url.pathname}`;
-
-    switch (route) {
-      case "GET /api/health": {
-        const row = await env.DB.prepare("SELECT COUNT(*) AS n FROM entries").first<{ n: number }>();
-        return json({ ok: true, entries: row?.n ?? 0 });
-      }
-      case "GET /api/wall":
-        return wall(env);
-      case "POST /api/sign":
-        return sign(request, env);
-      case "GET /api/me":
-        return me(url, env);
-      case "POST /api/admin/stats":
-        return adminStats(request, env);
-      case "POST /api/admin/wipe":
-        return adminWipe(request, env);
-      default:
-        return json({ error: "not_found" }, 404);
+    try {
+      return await route(request, env);
+    } catch (error) {
+      console.error(error);
+      return json({ error: "server" }, 500);
     }
   },
 };
