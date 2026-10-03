@@ -16,9 +16,14 @@
       <script>
         (function () {
           var slide = document.currentScript.closest('.slide');
+          var img = slide.querySelector('#board-img');
+          var fr = slide.querySelector('#board-frame');
+          var MAIN = 'https://hackerboard.zaquariah.workers.dev/';
+          var local = location.protocol === 'http:' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
           var p = new URLSearchParams(location.search).get('board');
-          if (!p) return;
-          var url = p === 'main' ? 'https://hackerboard.zaquariah.workers.dev/' : p;
+          if (!p) p = local ? 'main' : 'static';
+          if (p === 'static') return;
+          var url = p === 'main' ? MAIN : p;
           var ok = false, u;
           try {
             u = new URL(url);
@@ -26,17 +31,22 @@
                  (u.protocol === 'http:' && (u.hostname === 'localhost' || u.hostname === '127.0.0.1'));
           } catch (e) {}
           if (!ok) return;
-          var img = slide.querySelector('#board-img');
-          var fr = slide.querySelector('#board-frame');
           slide.querySelector('#board-url').textContent = u.host;
-          function load() {
-            if (!fr.getAttribute('src')) fr.setAttribute('src', url);
-            img.style.display = 'none';
-            fr.style.display = 'block';
+          var live = true;
+          function show() {
+            if (live && !fr.getAttribute('src')) fr.setAttribute('src', url);
+            img.style.display = live ? 'none' : '';
+            fr.style.display = live ? 'block' : 'none';
           }
-          new MutationObserver(function () { if (slide.classList.contains('active')) load(); })
+          new MutationObserver(function () { if (slide.classList.contains('active')) show(); })
             .observe(slide, { attributes: true, attributeFilter: ['class'] });
-          if (slide.classList.contains('active')) load();
+          document.addEventListener('keydown', function (e) {
+            if (e.key.toLowerCase() !== 'b' || e.ctrlKey || e.metaKey || e.altKey) return;
+            if (!slide.classList.contains('active')) return;
+            live = !live;
+            show();
+          });
+          if (slide.classList.contains('active')) show();
         })();
       </script>
       <p class="text-lg text-swivel-slate mt-4">Hackerboard, built live with Claude Code and deployed to Cloudflare</p>
